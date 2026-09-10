@@ -1,6 +1,8 @@
-# Proxmox QuickActions
+# QuickActions for Proxmox Virtual Environment
 
 A Firefox extension that puts your entire Proxmox VE cluster in your toolbar — see the status of all your VMs and containers at a glance and control them with one click.
+
+> **Note:** This project is not affiliated with, endorsed by, or sponsored by Proxmox Server Solutions GmbH. "Proxmox" and "Proxmox Virtual Environment" are registered trademarks of Proxmox Server Solutions GmbH.
 
 ![Dark Theme](screenshots/popup-dark.png)
 

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Proxmox QuickActions",
-  "version": "0.2.4",
-  "description": "Quick-Actions Flyout für Proxmox LXC/VM — Status, Power-Controls, Snapshot, Backup",
+  "name": "QuickActions for Proxmox Virtual Environment",
+  "version": "0.2.5",
+  "description": "Quick-Actions flyout for Proxmox VE guests — status overview, power controls, snapshots, backups",
   "browser_specific_settings": {
     "gecko": {
       "id": "proxmox-quickactions@andiatom.com",
@@ -16,7 +16,7 @@
   "optional_host_permissions": ["https://*/*", "http://*/*"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Proxmox QuickActions",
+    "default_title": "QuickActions for Proxmox VE",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
