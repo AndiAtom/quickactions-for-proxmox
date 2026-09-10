@@ -16,6 +16,7 @@ const elBackupStorage = document.getElementById("backup-storage");
 const elTheme = document.getElementById("theme");
 const elSortBy = document.getElementById("sort-by");
 const elStatusFirst = document.getElementById("status-first");
+const elRefreshInterval = document.getElementById("refresh-interval");
 const elTestConnection = document.getElementById("test-connection");
 const elTestResult = document.getElementById("test-result");
 const elSave = document.getElementById("save");
@@ -84,6 +85,7 @@ async function loadConfig() {
       applyTheme(elTheme.value);
       elSortBy.value = config.sortBy || "name";
       elStatusFirst.checked = config.statusFirst !== false; // Default: true
+      elRefreshInterval.value = String(config.refreshInterval !== undefined ? config.refreshInterval : 30);
 
       // Storage-Dropdown aktivieren, wenn schon konfiguriert
       if (config.pveUrl && config.apiTokenId && config.apiTokenSecret) {
@@ -131,7 +133,8 @@ async function testConnection() {
       backupStorage: elBackupStorage.value || "",
       theme: elTheme.value,
       sortBy: elSortBy.value,
-      statusFirst: elStatusFirst.checked
+      statusFirst: elStatusFirst.checked,
+      refreshInterval: Number(elRefreshInterval.value)
     }
   });
 
@@ -203,7 +206,8 @@ async function saveConfig() {
     backupStorage: elBackupStorage.value,
     theme: elTheme.value,
     sortBy: elSortBy.value,
-    statusFirst: elStatusFirst.checked
+    statusFirst: elStatusFirst.checked,
+    refreshInterval: Number(elRefreshInterval.value)
   };
 
   try {

@@ -449,6 +449,12 @@ async function loadResources() {
       return;
     }
 
+    // Ausgewählte Gäste (Checkboxen) vor dem Re-Render merken
+    const selectedVmids = new Set(
+      Array.from(document.querySelectorAll(".backup-checkbox:checked"))
+        .map(cb => Number(cb.closest(".resource-entry").dataset.vmid))
+    );
+
     elList.innerHTML = "";
     const res = await sendMessage({ action: "getResources" });
 
@@ -477,6 +483,15 @@ async function loadResources() {
     const frag = document.createDocumentFragment();
     sorted.forEach(r => frag.appendChild(renderResource(r)));
     elList.appendChild(frag);
+
+    // Checkbox-Auswahl nach dem Re-Render wiederherstellen
+    if (selectedVmids.size > 0) {
+      document.querySelectorAll(".backup-checkbox").forEach(cb => {
+        const vmid = Number(cb.closest(".resource-entry").dataset.vmid);
+        if (selectedVmids.has(vmid)) cb.checked = true;
+      });
+    }
+
     updateBackupButton();
   } catch (err) {
     showError(err.message);
@@ -497,14 +512,21 @@ elBackup.addEventListener("click", handleBackup);
 
 // --- Init ---
 
-// Theme aus Config anwenden (vor dem ersten Render, damit kein Flackern entsteht)
+// Theme + Auto-Refresh-Interval aus Config (vor dem ersten Render, kein Flackern)
 (async () => {
   try {
     const cfg = await sendMessage({ action: "getConfig" });
-    if (cfg.success && cfg.data.theme === "light") {
-      document.body.classList.add("theme-light");
+    if (cfg.success) {
+      if (cfg.data.theme === "light") {
+        document.body.classList.add("theme-light");
+      }
+      // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
+      const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);
+      if (interval > 0) {
+        window.setInterval(loadResources, interval * 1000);
+      }
     }
-  } catch { /* Default: dark */ }
+  } catch { /* Default: dark, kein Auto-Refresh-Fehler */ }
 })();
 
 // Footer-Buttons mit Icons befüllen (Text kommt via updateBackupButton)

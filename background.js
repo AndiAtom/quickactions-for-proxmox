@@ -22,7 +22,8 @@ const DEFAULT_CONFIG = {
   backupStorage: "",  // PVE Storage Name für vzdump
   theme: "dark",      // "dark" | "light"
   sortBy: "name",    // "name" (alphabetisch) | "vmid" (nach ID) | "status" (nach Status)
-  statusFirst: true   // laufende Gäste zuerst sortieren
+  statusFirst: true,  // laufende Gäste zuerst sortieren
+  refreshInterval: 30 // Auto-Refresh in Sekunden; 0 = aus
 };
 
 /**
