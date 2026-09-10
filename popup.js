@@ -552,9 +552,25 @@ function sortResources(resources, sortBy, statusFirst) {
 
 // --- Load & Render ---
 
+/**
+ * Lässt das Refresh-Icon im Footer kurz rotieren — Feedback für den
+ * Auto-Refresh-Tick ohne großen Loading-Spinner.
+ */
+function pulseRefreshIcon() {
+  const icon = elRefresh.querySelector(".icon svg");
+  if (!icon) return;
+  icon.classList.remove("refresh-pulse");
+  // reflow erzwingen, damit die Animation neu startet
+  void icon.offsetWidth;
+  icon.classList.add("refresh-pulse");
+}
+
 async function loadResources(isAutoRefresh = false) {
-  // Bei Auto-Refresh kein Loading-Spinner — der flackert sonst bei jedem Tick
-  if (!isAutoRefresh) {
+  // Bei Auto-Refresh kein Loading-Spinner (flackert) — stattdessen
+  // rotiert das Refresh-Icon im Footer kurz als Tick-Feedback
+  if (isAutoRefresh) {
+    pulseRefreshIcon();
+  } else {
     elLoading.classList.remove("hidden");
   }
   elError.classList.add("hidden");

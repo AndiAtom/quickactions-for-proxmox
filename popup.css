@@ -362,6 +362,16 @@ body {
   vertical-align: middle;
 }
 
+/* Auto-Refresh-Tick: Refresh-Icon rotiert einmal kurz durch */
+@keyframes refresh-pulse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#refresh-btn .icon svg.refresh-pulse {
+  animation: refresh-pulse 0.6s ease-in-out;
+}
+
 /* Not-Configured Box */
 .not-configured {
   padding: 24px 16px;
