@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Simplified icon for small sizes: power symbol only -->
+  <rect x="2" y="2" width="124" height="124" rx="28" fill="#1a1a2e"/>
+
+  <!-- Power symbol: large, centered -->
+  <g transform="translate(64,64)">
+    <path d="M 0,-42 A 42,42 0 1 1 -29.7,29.7"
+          fill="none" stroke="#4ecca3" stroke-width="9" stroke-linecap="round"/>
+    <line x1="0" y1="-42" x2="0" y2="-12" stroke="#4ecca3" stroke-width="9" stroke-linecap="round"/>
+  </g>
+</svg>

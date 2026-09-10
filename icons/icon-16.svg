@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Simplified icon for 16/32px: bold power symbol — Proxmox orange -->
+  <rect x="0" y="0" width="128" height="128" rx="28" fill="#1a1a2e"/>
+
+  <g transform="translate(64,64)">
+    <path d="M 32.5,-32.5 A 46,46 0 1 1 -32.5,-32.5"
+          fill="none" stroke="#e57000" stroke-width="14" stroke-linecap="round"/>
+    <line x1="0" y1="-46" x2="0" y2="-6" stroke="#e57000" stroke-width="14" stroke-linecap="round"/>
+  </g>
+</svg>

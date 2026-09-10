@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Full icon: server rack + power symbol — Proxmox brand colors -->
+  <rect x="2" y="2" width="124" height="124" rx="28" fill="#1a1a2e"/>
+
+  <!-- Server rack: 3 stacked units (upper third) -->
+  <rect x="30" y="14" width="68" height="14" rx="3" fill="#16213e" stroke="#e57000" stroke-width="1.5" opacity="0.85"/>
+  <circle cx="38" cy="21" r="2" fill="#e57000"/>
+  <rect x="46" y="19" width="46" height="4" rx="1.5" fill="#2a2a4a"/>
+
+  <rect x="30" y="32" width="68" height="14" rx="3" fill="#16213e" stroke="#e57000" stroke-width="1.5" opacity="0.85"/>
+  <circle cx="38" cy="39" r="2" fill="#e57000"/>
+  <rect x="46" y="37" width="46" height="4" rx="1.5" fill="#2a2a4a"/>
+
+  <rect x="30" y="50" width="68" height="14" rx="3" fill="#16213e" stroke="#e57000" stroke-width="1.5" opacity="0.85"/>
+  <circle cx="38" cy="57" r="2" fill="#a7c7ff"/>
+  <rect x="46" y="55" width="46" height="4" rx="1.5" fill="#2a2a4a"/>
+
+  <!-- Power symbol: 270° arc, gap centered at top -->
+  <g transform="translate(64,90)">
+    <path d="M 19.8,-19.8 A 28,28 0 1 1 -19.8,-19.8"
+          fill="none" stroke="#e57000" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="-28" x2="0" y2="-4" stroke="#e57000" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

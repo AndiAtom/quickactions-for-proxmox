@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="options.css">
+  <title>Proxmox QuickActions — Einstellungen</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Proxmox QuickActions — Einstellungen</h1>
+
+    <section>
+      <h2>Verbindung</h2>
+
+      <div class="field">
+        <label for="pve-url">PVE URL</label>
+        <input type="url" id="pve-url" placeholder="https://pve.example.com:8006" spellcheck="false">
+        <small>Base-URL deines Proxmox VE Servers inkl. Port (Standard: 8006)</small>
+      </div>
+
+      <div class="field">
+        <label for="api-token-id">API Token ID</label>
+        <input type="text" id="api-token-id" placeholder="user@pam!tokenname" spellcheck="false">
+        <small>Format: USER@REALM!TOKENID — anlegen in PVE unter Datacenter → API Tokens</small>
+      </div>
+
+      <div class="field">
+        <label for="api-token-secret">API Token Secret</label>
+        <input type="password" id="api-token-secret" placeholder="UUID" spellcheck="false" autocomplete="off">
+        <small>Wird nur einmalig beim Anlegen des Tokens angezeigt. Bleibt lokal in deinem Browser.</small>
+      </div>
+
+      <div class="field">
+        <button id="test-connection" class="btn-secondary">🔌 Verbindung testen</button>
+        <span id="test-result" class="test-result"></span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Darstellung</h2>
+
+      <div class="field">
+        <label for="theme">Theme</label>
+        <select id="theme">
+          <option value="dark">Dark Theme</option>
+          <option value="light">Light Theme</option>
+        </select>
+        <small>Wird sofort nach dem Speichern angewendet</small>
+      </div>
+    </section>
+
+    <section>
+      <h2>Sortierung</h2>
+
+      <div class="field">
+        <label for="sort-by">Gäste sortieren nach</label>
+        <select id="sort-by">
+          <option value="name">Alphabetisch (Name)</option>
+          <option value="vmid">Nach ID (VMID)</option>
+          <option value="status">Nach Status</option>
+        </select>
+      </div>
+
+      <div class="field field-inline">
+        <input type="checkbox" id="status-first">
+        <label for="status-first" class="label-inline">Laufende Gäste zuerst</label>
+        <small>Gruppiert running/stopped — wirkt bei allen Sortierungen</small>
+      </div>
+    </section>
+
+    <section>
+      <h2>Backup</h2>
+
+      <div class="field">
+        <label for="backup-storage">Backup-Storage</label>
+        <select id="backup-storage" disabled>
+          <option value="">— Zuerst Verbindung speichern —</option>
+        </select>
+        <small>Verfügbare Storages mit Backup-Content, aus PVE geladen</small>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="save" class="btn-primary">Speichern</button>
+      <span id="save-status" class="save-status"></span>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

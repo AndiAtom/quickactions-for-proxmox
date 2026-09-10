@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Proxmox QuickActions",
+  "version": "0.2.1",
+  "description": "Quick-Actions Flyout für Proxmox LXC/VM — Status, Power-Controls, Snapshot, Backup",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "proxmox-quickactions@andiatom.com",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "permissions": ["storage"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Proxmox QuickActions",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

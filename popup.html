@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+  <title>Proxmox QuickActions</title>
+</head>
+<body>
+  <!-- Header -->
+  <div id="header">
+    <span id="title">Proxmox QuickActions</span>
+    <span id="status-indicator" class="status-unknown" title="Verbindung wird hergestellt..."></span>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="hidden">
+    <span class="spinner"></span> Lade Ressourcen...
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="hidden"></div>
+
+  <!-- Ressourcen-Liste -->
+  <div id="resource-list"></div>
+
+  <!-- Footer -->
+  <div id="footer">
+    <button id="refresh-btn" title="Aktualisieren"></button>
+    <button id="backup-btn" title="Backup ausgewählter Gäste"></button>
+  </div>
+
+  <!-- Confirm-Overlay (ersetzt window.confirm — das sprengt das Popup-Layout) -->
+  <div id="confirm-overlay" class="hidden">
+    <div id="confirm-box">
+      <p id="confirm-message"></p>
+      <div id="confirm-buttons">
+        <button id="confirm-cancel" class="btn-secondary">Abbrechen</button>
+        <button id="confirm-ok" class="btn-primary">Ausführen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="icons.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

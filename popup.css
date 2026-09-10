@@ -1,0 +1,498 @@
+/* === Proxmox QuickActions — Popup Styles === */
+
+/* Dark Theme (Default) */
+:root,
+.theme-dark {
+  --bg: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-hover: #0f3460;
+  --fg: #e0e0e0;
+  --fg-muted: #8888aa;
+  --accent: #e57000;
+  --danger: #e94560;
+  --warning: #f9a826;
+  --border: #2a2a4a;
+  --radius: 6px;
+  --popup-width: 340px;
+  --popup-max-height: 500px;
+}
+
+/* Light Theme — angelehnt an Proxmox WebUI (weiß/grau + Proxmox-Orange) */
+.theme-light {
+  --bg: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-hover: #fdebd9;
+  --fg: #2b2b2b;
+  --fg-muted: #8c8c8c;
+  --accent: #e57000;
+  --danger: #d93025;
+  --warning: #b0620d;
+  --border: #d9d9d9;
+  --radius: 6px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: var(--popup-width);
+  max-height: var(--popup-max-height);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+}
+
+/* Header */
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-shrink: 0; /* bleibt fixiert beim Scrollen der Liste */
+}
+
+#title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-running {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.status-stopped {
+  background: var(--danger);
+}
+
+.status-unknown {
+  background: var(--fg-muted);
+}
+
+/* Loading & Error */
+#loading, #error {
+  padding: 20px;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+#error {
+  color: var(--danger);
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Resource-Liste — der einzige scrollbare Bereich */
+#resource-list {
+  padding: 6px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0; /* erlaubt Schrumpfen im Flex-Layout */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* WebKit-Scrollbar (falls Chromium-basierte Browser) */
+#resource-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#resource-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#resource-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+#resource-list::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-muted);
+}
+
+.resource-entry {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.resource-entry:hover {
+  border-color: var(--border);
+}
+
+/* Backup-Checkbox in der Resource-Zeile */
+.backup-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-input, #0f1b33);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.15s;
+}
+
+.backup-checkbox:hover {
+  border-color: var(--accent);
+}
+
+.backup-checkbox:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.backup-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--bg);
+}
+
+.resource-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resource-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.resource-dot.running {
+  background: var(--accent);
+  box-shadow: 0 0 4px var(--accent);
+}
+
+.resource-dot.stopped {
+  background: var(--danger);
+}
+
+.resource-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.resource-meta {
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.resource-bars {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  padding-left: 16px;
+  font-size: 10px;
+  flex-wrap: nowrap;
+  /* Nicht aus dem Entry rauslaufen */
+  width: 100%;
+  min-width: 0;
+}
+
+.bar-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  /* Flex-Shrinking erlauben */
+  min-width: 0;
+}
+
+.bar-label {
+  color: var(--fg-muted);
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  width: 64px;
+  flex-shrink: 1;
+  min-width: 40px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.bar-fill.cpu {
+  background: var(--accent);
+}
+
+.bar-fill.ram {
+  background: var(--warning);
+}
+
+.bar-fill.na {
+  background: var(--border);
+  width: 100% !important;
+}
+
+/* N/A-Text bei stopped VMs */
+.bar-fill.na + .bar-text,
+.resource-entry .bar-group:has(.bar-fill.na) .bar-text {
+  color: var(--fg-muted);
+}
+
+.bar-text {
+  color: var(--fg-muted);
+  font-size: 10px;
+  /* Kein min-width — sonst laufen 2 Bars aus dem Entry (100% + 100%) */
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Action-Buttons */
+.resource-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  padding-left: 16px;
+}
+
+.action-btn {
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+.action-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn.danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.action-btn.danger {
+  color: var(--fg-muted);
+}
+
+.action-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Icon-Buttons: SVG vertikal ausrichten */
+.action-btn .icon,
+#footer button .icon {
+  display: inline-flex;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.action-btn .icon svg {
+  display: block;
+}
+
+/* Button-Spinner (klein, in Action-Buttons) */
+.btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+/* Not-Configured Box */
+.not-configured {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--fg-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.not-configured button {
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Empty-State */
+.empty-list {
+  padding: 20px;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+/* Confirm-Overlay — füllt das Popup, Dialog zentriert */
+#confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#confirm-overlay.hidden {
+  display: none;
+}
+
+#confirm-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 16px;
+  max-width: 280px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+#confirm-message {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+#confirm-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+#confirm-buttons button {
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+#confirm-ok {
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+}
+
+#confirm-ok:hover {
+  opacity: 0.9;
+}
+
+#confirm-cancel {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+#confirm-cancel:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Footer */
+#footer {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-shrink: 0; /* bleibt fixiert beim Scrollen der Liste */
+}
+
+#footer button {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+#footer button:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+#footer button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+#footer button:disabled:hover {
+  background: transparent;
+  border-color: var(--border);
+}

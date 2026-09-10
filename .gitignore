@@ -1,0 +1,9 @@
+# Credentials — niemals committen
+*credentials*
+*secret*
+*.env
+*.pem
+*.key
+web-ext-artifacts/
+.amo-upload-uuid
+AI-HELPER.md

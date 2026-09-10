@@ -1,0 +1,193 @@
+/* === Proxmox QuickActions — Options Styles === */
+
+/* Dark Theme (Default) */
+:root,
+.theme-dark {
+  --bg: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-input: #0f1b33;
+  --fg: #e0e0e0;
+  --fg-muted: #8888aa;
+  --accent: #e57000;
+  --border: #2a2a4a;
+  --radius: 6px;
+}
+
+/* Light Theme — passend zum Popup-Light-Theme (Proxmox WebUI-Anlehnung) */
+.theme-light {
+  --bg: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --fg: #2b2b2b;
+  --fg-muted: #8c8c8c;
+  --accent: #e57000;
+  --border: #d9d9d9;
+  --radius: 6px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  padding: 20px;
+}
+
+.container {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+h2 {
+  font-size: 16px;
+  margin: 24px 0 12px;
+  color: var(--accent);
+}
+
+section {
+  margin-bottom: 24px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--fg);
+  font-size: 13px;
+  font-family: monospace;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.field-inline input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.label-inline {
+  font-weight: 500;
+  margin: 0;
+  display: inline;
+}
+
+small {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.field-inline small {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.actions {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--fg);
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+#load-storages {
+  display: block;
+}
+
+.test-result {
+  font-size: 12px;
+  margin-left: 12px;
+  color: var(--fg-muted);
+}
+
+.test-result.success {
+  color: var(--accent);
+}
+
+.test-result.error {
+  color: #e94560;
+}
+
+#test-connection {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.save-status {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.save-status.success {
+  color: var(--accent);
+}
+
+.save-status.error {
+  color: #e94560;
+}
