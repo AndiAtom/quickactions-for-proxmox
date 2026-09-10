@@ -200,7 +200,120 @@ function renderResource(res) {
   }
   entry.appendChild(bars);
 
-  // --- Row 3: Action-Buttons ---
+  // --- Row 3: Action-Buttons (shared mit Statuswechsel-Update) ---
+  entry.appendChild(buildActionButtons(res));
+
+  entry.dataset.status = res.status;
+  return entry;
+}
+
+/**
+ * Aktualisiert einen bestehenden Resource-Entry in-place (Auto-Refresh V2):
+ * Status-Dot, Uptime-Tooltip, CPU/RAM-Bars und — nur bei Statuswechsel —
+ * die Action-Buttons. Buttons im Loading-Zustand (laufende Aktion) werden
+ * nicht angefasst, damit das Feedback erhalten bleibt.
+ * @param {HTMLElement} entry - der bestehende .resource-entry
+ * @param {Object} res - neue Proxmox resource data
+ */
+function updateResourceEntry(entry, res) {
+  const isRunning = res.status === "running";
+  const wasRunning = entry.dataset.status === "running";
+  const { node, type, vmid } = res;
+  const resName = res.name || `VM ${vmid}`;
+
+  // --- Row 1: Dot + Name aktualisieren ---
+  const dot = entry.querySelector(".resource-dot");
+  if (dot) {
+    dot.className = `resource-dot ${res.status}`;
+    dot.title = isRunning
+      ? `Uptime: ${formatUptime(res.uptime)}`
+      : "Gestoppt";
+  }
+
+  const name = entry.querySelector(".resource-name");
+  if (name) {
+    name.textContent = resName;
+    name.title = `${node} / ${type}/${vmid}`;
+  }
+
+  // --- Row 2: Bars aktualisieren (in-place, kein Neu-Bau) ---
+  const bars = entry.querySelector(".resource-bars");
+  if (bars) {
+    if (isRunning && res.maxmem) {
+      const cpuPct = Math.round((res.cpu || 0) * 100);
+      const ramPct = memPercent(res.mem, res.maxmem);
+
+      const groups = bars.querySelectorAll(".bar-group");
+      if (groups.length === 2) {
+        // Bestehende Bars updaten: Fill-Breite + Prozenttext
+        updateBarGroup(groups[0], cpuPct, false);
+        updateBarGroup(groups[1], ramPct, false);
+      } else {
+        // War N/A (stopped) → jetzt running: Bars neu bauen
+        bars.replaceChildren(
+          buildBarGroup("CPU", cpuPct, "cpu"),
+          buildBarGroup("RAM", ramPct, "ram")
+        );
+      }
+    } else {
+      // Stopped → N/A-Bars (falls noch nicht)
+      const groups = bars.querySelectorAll(".bar-group");
+      if (groups.length === 2 && !groups[0].querySelector(".bar-fill.na")) {
+        bars.replaceChildren(
+          buildBarGroup("CPU", 0, "na"),
+          buildBarGroup("RAM", 0, "na")
+        );
+      }
+    }
+  }
+
+  // --- Row 3: Buttons NUR bei Statuswechsel neu bauen ---
+  if (isRunning !== wasRunning) {
+    const actions = entry.querySelector(".resource-actions");
+    if (actions) {
+      // Loading-Buttons nicht überschreiben — laufende Aktion hat Vorrang
+      const hasLoading = actions.querySelector(".action-btn.loading");
+      if (!hasLoading) {
+        entry.replaceChild(buildActionButtons(res), actions);
+      }
+    }
+  }
+
+  entry.dataset.status = res.status;
+}
+
+/**
+ * Aktualisiert eine bestehende Bar-Group in-place.
+ * @param {HTMLElement} group - .bar-group
+ * @param {number} pct - 0-100
+ * @param {boolean} na - N/A-Style
+ */
+function updateBarGroup(group, pct, na) {
+  const fill = group.querySelector(".bar-fill");
+  const text = group.querySelector(".bar-text");
+  if (!fill || !text) return;
+
+  if (na) {
+    fill.className = "bar-fill na";
+    fill.style.width = "100%";
+    text.textContent = "—";
+  } else {
+    fill.className = fill.className.replace(" na", "");
+    fill.style.width = `${pct}%`;
+    text.textContent = `${pct}%`;
+  }
+}
+
+/**
+ * Baut die Action-Button-Zeile für einen Gast (bei Statuswechsel).
+ * @param {Object} res - Proxmox resource data
+ * @returns {HTMLElement} - .resource-actions div
+ */
+function buildActionButtons(res) {
+  const isRunning = res.status === "running";
+  const { node, type, vmid } = res;
+  const resName = res.name || `VM ${vmid}`;
+
   const actions = document.createElement("div");
   actions.className = "resource-actions";
 
@@ -235,8 +348,7 @@ function renderResource(res) {
     actions.appendChild(startBtn);
   }
 
-  entry.appendChild(actions);
-  return entry;
+  return actions;
 }
 
 /**
@@ -303,6 +415,9 @@ function setButtonLoading(btn) {
   btn.replaceChildren(spinner);
 
   return () => {
+    // Falls der Button aus dem DOM entfernt wurde (Entry wurde neu gebaut),
+    // ist das Restore ein No-Op — der neue Button hat den richtigen Zustand.
+    if (!btn.isConnected) return;
     btn.classList.remove("loading");
     btn.disabled = false;
     btn.replaceChildren(...originalChildren);
@@ -318,7 +433,10 @@ async function handlePowerAction(node, type, vmid, powerAction, resName, btn) {
   try {
     const res = await sendMessage({ action: "powerAction", node, type, vmid, powerAction });
     if (res.success) {
-      await loadResources(); // Refresh nach Action — baut Buttons neu
+      // Update-Pfad (kein Voll-Render) — dieser Entry bekommt beim Statuswechsel
+      // frische Buttons; der Loading-Button bleibt bis dahin als Feedback stehen
+      await loadResources(true);
+      restoreBtn(); // falls der Entry nicht neu gebaut wurde (Status gleich)
     } else {
       restoreBtn();
       showError(`${labels[powerAction]} fehlgeschlagen: ${res.error}`);
@@ -337,7 +455,9 @@ async function handleSnapshot(node, type, vmid, resName, btn) {
   const restoreBtn = setButtonLoading(btn);
   try {
     const res = await sendMessage({ action: "createSnapshot", node, type, vmid, snapname });
-    if (!res.success) {
+    if (res.success) {
+      restoreBtn(); // Snapshot ändert den Status nicht — Button wiederherstellen
+    } else {
       restoreBtn();
       showError(`Snapshot fehlgeschlagen: ${res.error}`);
     }
@@ -432,8 +552,11 @@ function sortResources(resources, sortBy, statusFirst) {
 
 // --- Load & Render ---
 
-async function loadResources() {
-  elLoading.classList.remove("hidden");
+async function loadResources(isAutoRefresh = false) {
+  // Bei Auto-Refresh kein Loading-Spinner — der flackert sonst bei jedem Tick
+  if (!isAutoRefresh) {
+    elLoading.classList.remove("hidden");
+  }
   elError.classList.add("hidden");
 
   try {
@@ -449,13 +572,6 @@ async function loadResources() {
       return;
     }
 
-    // Ausgewählte Gäste (Checkboxen) vor dem Re-Render merken
-    const selectedVmids = new Set(
-      Array.from(document.querySelectorAll(".backup-checkbox:checked"))
-        .map(cb => Number(cb.closest(".resource-entry").dataset.vmid))
-    );
-
-    elList.innerHTML = "";
     const res = await sendMessage({ action: "getResources" });
 
     if (!res.success) {
@@ -476,22 +592,38 @@ async function loadResources() {
       const empty = document.createElement("div");
       empty.className = "empty-list";
       empty.textContent = "Keine Ressourcen gefunden";
-      elList.appendChild(empty);
+      elList.replaceChildren(empty);
       return;
     }
 
-    const frag = document.createDocumentFragment();
-    sorted.forEach(r => frag.appendChild(renderResource(r)));
-    elList.appendChild(frag);
+    // --- V2-Update-Pfad: bestehende Entries in-place aktualisieren ---
+    const existingEntries = new Map();
+    document.querySelectorAll("#resource-list .resource-entry").forEach(e => {
+      existingEntries.set(Number(e.dataset.vmid), e);
+    });
 
-    // Checkbox-Auswahl nach dem Re-Render wiederherstellen
-    if (selectedVmids.size > 0) {
-      document.querySelectorAll(".backup-checkbox").forEach(cb => {
-        const vmid = Number(cb.closest(".resource-entry").dataset.vmid);
-        if (selectedVmids.has(vmid)) cb.checked = true;
+    const hasListStructure = existingEntries.size > 0;
+    const newVmids = new Set(sorted.map(r => r.vmid));
+    const structureChanged =
+      !hasListStructure ||
+      existingEntries.size !== sorted.length ||
+      [...existingEntries.keys()].some(vmid => !newVmids.has(vmid));
+
+    if (hasListStructure && !structureChanged) {
+      // Reiner Daten-Update: Werte in bestehenden Entries aktualisieren.
+      // Reihenfolge/Checkboxes/Loading-Buttons bleiben unberührt.
+      sorted.forEach(r => {
+        const entry = existingEntries.get(r.vmid);
+        if (entry) updateResourceEntry(entry, r);
       });
+      updateBackupButton();
+      return;
     }
 
+    // --- Voll-Render (erstes Laden oder Struktur geändert: VMs dazu/weg) ---
+    const frag = document.createDocumentFragment();
+    sorted.forEach(r => frag.appendChild(renderResource(r)));
+    elList.replaceChildren(frag);
     updateBackupButton();
   } catch (err) {
     showError(err.message);
@@ -523,7 +655,7 @@ elBackup.addEventListener("click", handleBackup);
       // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
       const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);
       if (interval > 0) {
-        window.setInterval(loadResources, interval * 1000);
+        window.setInterval(() => loadResources(true), interval * 1000);
       }
     }
   } catch { /* Default: dark, kein Auto-Refresh-Fehler */ }
