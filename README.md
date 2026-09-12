@@ -58,6 +58,8 @@ web-ext lint    # validate
 web-ext run     # test in Firefox (hot reload)
 web-ext sign    # sign for distribution
 ```
+## Disclaimer
+This little project was mostly developed by AI. To be specific: zAI GLM 5.3.
 
 ## License
 
