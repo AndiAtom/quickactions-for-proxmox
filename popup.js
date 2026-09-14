@@ -667,6 +667,8 @@ elBackup.addEventListener("click", handleBackup);
     if (cfg.success) {
       if (cfg.data.theme === "light") {
         document.body.classList.add("theme-light");
+      } else if (cfg.data.theme === "nord") {
+        document.body.classList.add("theme-nord");
       }
       // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
       const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);

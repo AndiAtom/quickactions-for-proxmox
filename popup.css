@@ -31,6 +31,20 @@
   --radius: 6px;
 }
 
+/* Nord Theme — Nord color palette (nordtheme.com), polar night + frost */
+.theme-nord {
+  --bg: #2e3440;
+  --bg-card: #3b4252;
+  --bg-hover: #434c5e;
+  --fg: #d8dee9;
+  --fg-muted: #81a1c1;
+  --accent: #88c0d0;
+  --danger: #bf616a;
+  --warning: #ebcb8b;
+  --border: #4c566a;
+  --radius: 6px;
+}
+
 * {
   margin: 0;
   padding: 0;

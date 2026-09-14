@@ -250,10 +250,11 @@ function showTestResult(msg, type) {
 
 /**
  * Wendet das Theme auf die Options-Page an.
- * @param {string} theme - "dark" | "light"
+ * @param {string} theme - "dark" | "light" | "nord"
  */
 function applyTheme(theme) {
   document.body.classList.toggle("theme-light", theme === "light");
+  document.body.classList.toggle("theme-nord", theme === "nord");
 }
 
 // --- Event Listeners ---
