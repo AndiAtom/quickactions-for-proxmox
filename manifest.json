@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "QuickActions for Proxmox Virtual Environment",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Quick-Actions flyout for Proxmox VE guests — status overview, power controls, snapshots, backups",
   "browser_specific_settings": {
     "gecko": {
