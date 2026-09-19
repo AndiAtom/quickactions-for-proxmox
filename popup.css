@@ -291,6 +291,11 @@ body {
   background: var(--warning);
 }
 
+/* Über 100% (z.B. RAM über zugewiesener Grenze) — Kennzeichnung */
+.bar-fill.over {
+  background: var(--danger);
+}
+
 .bar-fill.na {
   background: var(--border);
   width: 100% !important;

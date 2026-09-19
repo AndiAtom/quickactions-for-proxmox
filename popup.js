@@ -125,8 +125,9 @@ function buildBarGroup(label, pct, fillClass) {
   const track = document.createElement("div");
   track.className = "bar-track";
   const fill = document.createElement("div");
-  fill.className = `bar-fill ${fillClass}`;
-  fill.style.width = `${pct}%`;
+  // >100% (z.B. RAM-Ballooning über zugewiesene Grenze): rot markieren, Breite klemmen
+  fill.className = `bar-fill ${fillClass}${pct > 100 ? " over" : ""}`;
+  fill.style.width = `${Math.min(pct, 100)}%`;
   track.appendChild(fill);
 
   const text = document.createElement("span");
@@ -299,7 +300,14 @@ function updateBarGroup(group, pct, na) {
     text.textContent = "—";
   } else {
     fill.className = fill.className.replace(" na", "");
-    fill.style.width = `${pct}%`;
+    // >100%: rot markieren (" over"), Breite auf 100% klemmen — Text zeigt echten Wert
+    if (pct > 100) {
+      if (!fill.classList.contains("over")) fill.classList.add("over");
+      fill.style.width = "100%";
+    } else {
+      fill.classList.remove("over");
+      fill.style.width = `${pct}%`;
+    }
     text.textContent = `${pct}%`;
   }
 }

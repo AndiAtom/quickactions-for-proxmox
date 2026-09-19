@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="../popup.css">
   <title>QuickActions</title>
 </head>
-<body class="theme-nord">
+<body>
   <!-- Header -->
   <div id="header">
     <span id="title">QuickActions</span>
@@ -47,10 +47,11 @@
       runtime: {
         sendMessage: (message) => {
           if (message.action === "getConfig") {
+            const theme = new URLSearchParams(location.search).get("theme") || "nord";
             return Promise.resolve({
               success: true,
               data: {
-                theme: "nord",
+                theme,
                 refreshInterval: 0,
                 sortBy: "name",
                 statusFirst: true,
