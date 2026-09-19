@@ -17,13 +17,11 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
   </tr>
   <tr>
     <td align="center" width="33%"><b>OLED</b></td>
-    <td></td>
-    <td></td>
+    <td rowspan="2" align="center" width="33%"><i>processing...</i></td>
+    <td rowspan="2" align="center" width="33%"><i>processing...</i></td>
   </tr>
   <tr>
     <td><a href="screenshots/popup-oled.png" title="OLED Theme (True Black) — click to enlarge"><img src="screenshots/popup-oled.png" width="100%" alt="OLED Theme"></a></td>
-    <td></td>
-    <td></td>
   </tr>
 </table>
 
