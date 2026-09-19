@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../popup.css">
+  <title>QuickActions</title>
+</head>
+<body class="theme-nord">
+  <!-- Header -->
+  <div id="header">
+    <span id="title">QuickActions</span>
+    <span id="status-indicator" class="status-unknown" title="Verbindung wird hergestellt..."></span>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="hidden">
+    <span class="spinner"></span> Lade Ressourcen...
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="hidden"></div>
+
+  <!-- Ressourcen-Liste -->
+  <div id="resource-list"></div>
+
+  <!-- Footer -->
+  <div id="footer">
+    <button id="refresh-btn" title="Aktualisieren"></button>
+    <button id="backup-btn" title="Backup ausgewählter Gäste"></button>
+  </div>
+
+  <!-- Confirm-Overlay (ersetzt window.confirm — das sprengt das Popup-Layout) -->
+  <div id="confirm-overlay" class="hidden">
+    <div id="confirm-box">
+      <p id="confirm-message"></p>
+      <div id="confirm-buttons">
+        <button id="confirm-cancel" class="btn-secondary">Abbrechen</button>
+        <button id="confirm-ok" class="btn-primary">Ausführen</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mock: browser-Namespace für Screenshot-Rendering außerhalb des Extension-Kontexts
+    window.browser = {
+      runtime: {
+        sendMessage: (message) => {
+          if (message.action === "getConfig") {
+            return Promise.resolve({
+              success: true,
+              data: {
+                theme: "nord",
+                refreshInterval: 0,
+                sortBy: "name",
+                statusFirst: true,
+                pveUrl: "https://pve.example:8006",
+                apiTokenId: "root@pam!screenshot",
+                apiTokenSecret: "mock"
+              }
+            });
+          }
+          if (message.action === "getResources") {
+            const GB = 1024 ** 3;
+            return Promise.resolve({
+              success: true,
+              data: [
+                { node: "pve", type: "lxc", vmid: 100, name: "docker-host", status: "running", cpu: 0.031, mem: 4 * GB, maxmem: 16 * GB, uptime: 37 * 86400 },
+                { node: "pve", type: "lxc", vmid: 101, name: "dns-server", status: "running", cpu: 0.016, mem: 0.5 * GB, maxmem: 2 * GB, uptime: 37 * 86400 },
+                { node: "pve", type: "lxc", vmid: 102, name: "cloud", status: "running", cpu: 0.057, mem: 12 * GB, maxmem: 32 * GB, uptime: 12 * 86400 },
+                { node: "pve", type: "lxc", vmid: 103, name: "home-automation", status: "running", cpu: 0.02, mem: 1 * GB, maxmem: 4 * GB, uptime: 21 * 86400 },
+                { node: "pve", type: "lxc", vmid: 104, name: "automation", status: "stopped", cpu: 0, mem: 0, maxmem: 8 * GB, uptime: 0 }
+              ]
+            });
+          }
+          return Promise.resolve({ success: false, error: "Unknown action" });
+        },
+        openOptionsPage: () => {}
+      }
+    };
+  </script>
+  <script src="../icons.js"></script>
+  <script src="../popup.js"></script>
+</body>
+</html>
