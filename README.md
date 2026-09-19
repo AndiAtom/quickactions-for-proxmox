@@ -4,7 +4,20 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 
 > **Note:** This project is not affiliated with, endorsed by, or sponsored by Proxmox Server Solutions GmbH. "Proxmox" and "Proxmox Virtual Environment" are registered trademarks of Proxmox Server Solutions GmbH.
 
-![Dark Theme](screenshots/popup-dark.png)
+<table>
+  <tr>
+    <td align="center"><b>Dark</b></td>
+    <td align="center"><b>Light</b></td>
+    <td align="center"><b>Nord</b></td>
+  </tr>
+  <tr>
+    <td><a href="screenshots/popup-dark.png" title="Dark Theme — click to enlarge"><img src="screenshots/popup-dark.png" width="200" alt="Dark Theme"></a></td>
+    <td><a href="screenshots/popup-light.png" title="Light Theme — click to enlarge"><img src="screenshots/popup-light.png" width="200" alt="Light Theme"></a></td>
+    <td><a href="screenshots/popup-nord.png" title="Nord Theme — click to enlarge"><img src="screenshots/popup-nord.png" width="200" alt="Nord Theme"></a></td>
+  </tr>
+</table>
+
+*Click a screenshot to view it full size.*
 
 ## Features
 
@@ -15,10 +28,6 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 - **Cluster support** — Multi-node environments (backups are grouped per node automatically)
 - **Dark, Light & Nord theme** — Switchable in the settings
 - **Flexible sorting** — Alphabetically, by ID or by status, with running guests first (optional)
-
-![Light Theme](screenshots/popup-light.png)
-
-![Nord Theme](screenshots/popup-nord.png)
 
 ## Setup
 
