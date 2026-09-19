@@ -28,11 +28,12 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
   <tr>
     <td align="center" width="33%"><b>Tokyo Night</b></td>
     <td align="center" width="33%"><b>Solarized Dark</b></td>
-    <td rowspan="2" align="center" width="33%"><i>processing...</i></td>
+    <td align="center" width="33%"><b>Monochrome</b></td>
   </tr>
   <tr>
     <td><a href="screenshots/popup-tokyo-night.png" title="Tokyo Night Theme — click to enlarge"><img src="screenshots/popup-tokyo-night.png" width="100%" alt="Tokyo Night Theme"></a></td>
     <td><a href="screenshots/popup-solarized-dark.png" title="Solarized Dark Theme — click to enlarge"><img src="screenshots/popup-solarized-dark.png" width="100%" alt="Solarized Dark Theme"></a></td>
+    <td><a href="screenshots/popup-monochrome.png" title="Monochrome Theme — click to enlarge"><img src="screenshots/popup-monochrome.png" width="100%" alt="Monochrome Theme"></a></td>
   </tr>
 </table>
 
@@ -45,7 +46,7 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 - **Snapshots** — One click creates a snapshot with automatic naming
 - **Backup (vzdump)** — Select guests via checkbox and back them up to your configured storage
 - **Cluster support** — Multi-node environments (backups are grouped per node automatically)
-- **8 themes** — Dark, Light, Nord, OLED (True Black), Dracula, Catppuccin Mocha, Tokyo Night & Solarized Dark — switchable in the settings
+- **9 themes** — Dark, Light, Nord, OLED (True Black), Dracula, Catppuccin Mocha, Tokyo Night, Solarized Dark & Monochrome — switchable in the settings
 - **Flexible sorting** — Alphabetically, by ID or by status, with running guests first (optional)
 
 ## Setup

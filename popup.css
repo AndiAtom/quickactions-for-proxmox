@@ -116,6 +116,22 @@
   --radius: 6px;
 }
 
+/* Monochrome Theme — reine Graustufen, keine Farbe.
+   Status nur über Helligkeit: running = weiß leuchtend, stopped = dunkelgrau,
+   Overload (>100%) = hellgrau statt rot. */
+.theme-monochrome {
+  --bg: #101010;
+  --bg-card: #1a1a1a;
+  --bg-hover: #262626;
+  --fg: #e8e8e8;
+  --fg-muted: #8a8a8a;
+  --accent: #f5f5f5;
+  --danger: #bdbdbd;
+  --warning: #9a9a9a;
+  --border: #303030;
+  --radius: 6px;
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -251,7 +251,8 @@ function showTestResult(msg, type) {
 /**
  * Wendet das Theme auf die Options-Page an.
  * @param {string} theme - "dark" | "light" | "nord" | "oled" | "dracula" |
- *                         "catppuccin" | "tokyo-night" | "solarized-dark"
+ *                         "catppuccin" | "tokyo-night" | "solarized-dark" |
+ *                         "monochrome"
  */
 function applyTheme(theme) {
   document.body.classList.toggle("theme-light", theme === "light");
@@ -261,6 +262,7 @@ function applyTheme(theme) {
   document.body.classList.toggle("theme-catppuccin", theme === "catppuccin");
   document.body.classList.toggle("theme-tokyo-night", theme === "tokyo-night");
   document.body.classList.toggle("theme-solarized-dark", theme === "solarized-dark");
+  document.body.classList.toggle("theme-monochrome", theme === "monochrome");
 }
 
 // --- Event Listeners ---

@@ -697,6 +697,8 @@ elBackup.addEventListener("click", handleBackup);
         document.body.classList.add("theme-tokyo-night");
       } else if (cfg.data.theme === "solarized-dark") {
         document.body.classList.add("theme-solarized-dark");
+      } else if (cfg.data.theme === "monochrome") {
+        document.body.classList.add("theme-monochrome");
       }
       // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
       const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);
