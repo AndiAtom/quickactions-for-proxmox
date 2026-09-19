@@ -687,6 +687,8 @@ elBackup.addEventListener("click", handleBackup);
         document.body.classList.add("theme-light");
       } else if (cfg.data.theme === "nord") {
         document.body.classList.add("theme-nord");
+      } else if (cfg.data.theme === "oled") {
+        document.body.classList.add("theme-oled");
       }
       // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
       const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);

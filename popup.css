@@ -45,6 +45,21 @@
   --radius: 6px;
 }
 
+/* OLED Theme — True Black (#000000), OLED-Pixel bleiben aus.
+   Struktur nur über Borders, Hover minimal (#0a0a0a). */
+.theme-oled {
+  --bg: #000000;
+  --bg-card: #000000;
+  --bg-hover: #0a0a0a;
+  --fg: #c8c8c8;
+  --fg-muted: #7a7a7a;
+  --accent: #e57000;
+  --danger: #e94560;
+  --warning: #f9a826;
+  --border: #222222;
+  --radius: 6px;
+}
+
 * {
   margin: 0;
   padding: 0;

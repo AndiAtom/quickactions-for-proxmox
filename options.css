@@ -37,6 +37,18 @@
   --radius: 6px;
 }
 
+/* OLED Theme — True Black, passend zum Popup-OLED-Theme */
+.theme-oled {
+  --bg: #000000;
+  --bg-card: #000000;
+  --bg-input: #000000;
+  --fg: #c8c8c8;
+  --fg-muted: #7a7a7a;
+  --accent: #e57000;
+  --border: #222222;
+  --radius: 6px;
+}
+
 * {
   margin: 0;
   padding: 0;

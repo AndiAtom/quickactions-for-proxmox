@@ -15,6 +15,16 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
     <td><a href="screenshots/popup-light.png" title="Light Theme — click to enlarge"><img src="screenshots/popup-light.png" width="100%" alt="Light Theme"></a></td>
     <td><a href="screenshots/popup-nord.png" title="Nord Theme — click to enlarge"><img src="screenshots/popup-nord.png" width="100%" alt="Nord Theme"></a></td>
   </tr>
+  <tr>
+    <td align="center" width="33%"><b>OLED</b></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><a href="screenshots/popup-oled.png" title="OLED Theme (True Black) — click to enlarge"><img src="screenshots/popup-oled.png" width="100%" alt="OLED Theme"></a></td>
+    <td></td>
+    <td></td>
+  </tr>
 </table>
 
 *Click a screenshot to view it full size.*
@@ -26,7 +36,7 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 - **Snapshots** — One click creates a snapshot with automatic naming
 - **Backup (vzdump)** — Select guests via checkbox and back them up to your configured storage
 - **Cluster support** — Multi-node environments (backups are grouped per node automatically)
-- **Dark, Light & Nord theme** — Switchable in the settings
+- **Dark, Light, Nord & OLED theme** — Switchable in the settings
 - **Flexible sorting** — Alphabetically, by ID or by status, with running guests first (optional)
 
 ## Setup
