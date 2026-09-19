@@ -250,12 +250,17 @@ function showTestResult(msg, type) {
 
 /**
  * Wendet das Theme auf die Options-Page an.
- * @param {string} theme - "dark" | "light" | "nord" | "oled"
+ * @param {string} theme - "dark" | "light" | "nord" | "oled" | "dracula" |
+ *                         "catppuccin" | "tokyo-night" | "solarized-dark"
  */
 function applyTheme(theme) {
   document.body.classList.toggle("theme-light", theme === "light");
   document.body.classList.toggle("theme-nord", theme === "nord");
   document.body.classList.toggle("theme-oled", theme === "oled");
+  document.body.classList.toggle("theme-dracula", theme === "dracula");
+  document.body.classList.toggle("theme-catppuccin", theme === "catppuccin");
+  document.body.classList.toggle("theme-tokyo-night", theme === "tokyo-night");
+  document.body.classList.toggle("theme-solarized-dark", theme === "solarized-dark");
 }
 
 // --- Event Listeners ---

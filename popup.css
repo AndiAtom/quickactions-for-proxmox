@@ -60,6 +60,62 @@
   --radius: 6px;
 }
 
+/* Dracula Theme — draculatheme.com */
+.theme-dracula {
+  --bg: #282a36;
+  --bg-card: #343746;
+  --bg-hover: #3e4152;
+  --fg: #f8f8f2;
+  --fg-muted: #6272a4;
+  --accent: #bd93f9;
+  --danger: #ff5555;
+  --warning: #f1fa8c;
+  --border: #44475a;
+  --radius: 6px;
+}
+
+/* Catppuccin Mocha Theme — catppuccin.com */
+.theme-catppuccin {
+  --bg: #1e1e2e;
+  --bg-card: #262637;
+  --bg-hover: #313244;
+  --fg: #cdd6f4;
+  --fg-muted: #7f849c;
+  --accent: #89b4fa;
+  --danger: #f38ba8;
+  --warning: #f9e2af;
+  --border: #45475a;
+  --radius: 6px;
+}
+
+/* Tokyo Night Theme — enkia.github.io/tokyonight */
+.theme-tokyo-night {
+  --bg: #1a1b26;
+  --bg-card: #24283b;
+  --bg-hover: #292e42;
+  --fg: #c0caf5;
+  --fg-muted: #565f89;
+  --accent: #7aa2f7;
+  --danger: #f7768e;
+  --warning: #e0af68;
+  --border: #3b4261;
+  --radius: 6px;
+}
+
+/* Solarized Dark Theme — ethanschoonover.com/solarized */
+.theme-solarized-dark {
+  --bg: #002b36;
+  --bg-card: #073642;
+  --bg-hover: #094352;
+  --fg: #93a1a1;
+  --fg-muted: #586e75;
+  --accent: #268bd2;
+  --danger: #dc322f;
+  --warning: #b58900;
+  --border: #0c4552;
+  --radius: 6px;
+}
+
 * {
   margin: 0;
   padding: 0;

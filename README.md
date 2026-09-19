@@ -17,11 +17,22 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
   </tr>
   <tr>
     <td align="center" width="33%"><b>OLED</b></td>
-    <td rowspan="2" align="center" width="33%"><i>processing...</i></td>
-    <td rowspan="2" align="center" width="33%"><i>processing...</i></td>
+    <td align="center" width="33%"><b>Dracula</b></td>
+    <td align="center" width="33%"><b>Catppuccin</b></td>
   </tr>
   <tr>
     <td><a href="screenshots/popup-oled.png" title="OLED Theme (True Black) — click to enlarge"><img src="screenshots/popup-oled.png" width="100%" alt="OLED Theme"></a></td>
+    <td><a href="screenshots/popup-dracula.png" title="Dracula Theme — click to enlarge"><img src="screenshots/popup-dracula.png" width="100%" alt="Dracula Theme"></a></td>
+    <td><a href="screenshots/popup-catppuccin.png" title="Catppuccin Mocha Theme — click to enlarge"><img src="screenshots/popup-catppuccin.png" width="100%" alt="Catppuccin Theme"></a></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><b>Tokyo Night</b></td>
+    <td align="center" width="33%"><b>Solarized Dark</b></td>
+    <td rowspan="2" align="center" width="33%"><i>processing...</i></td>
+  </tr>
+  <tr>
+    <td><a href="screenshots/popup-tokyo-night.png" title="Tokyo Night Theme — click to enlarge"><img src="screenshots/popup-tokyo-night.png" width="100%" alt="Tokyo Night Theme"></a></td>
+    <td><a href="screenshots/popup-solarized-dark.png" title="Solarized Dark Theme — click to enlarge"><img src="screenshots/popup-solarized-dark.png" width="100%" alt="Solarized Dark Theme"></a></td>
   </tr>
 </table>
 
@@ -34,7 +45,7 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 - **Snapshots** — One click creates a snapshot with automatic naming
 - **Backup (vzdump)** — Select guests via checkbox and back them up to your configured storage
 - **Cluster support** — Multi-node environments (backups are grouped per node automatically)
-- **Dark, Light, Nord & OLED theme** — Switchable in the settings
+- **8 themes** — Dark, Light, Nord, OLED (True Black), Dracula, Catppuccin Mocha, Tokyo Night & Solarized Dark — switchable in the settings
 - **Flexible sorting** — Alphabetically, by ID or by status, with running guests first (optional)
 
 ## Setup

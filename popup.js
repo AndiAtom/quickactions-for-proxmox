@@ -689,6 +689,14 @@ elBackup.addEventListener("click", handleBackup);
         document.body.classList.add("theme-nord");
       } else if (cfg.data.theme === "oled") {
         document.body.classList.add("theme-oled");
+      } else if (cfg.data.theme === "dracula") {
+        document.body.classList.add("theme-dracula");
+      } else if (cfg.data.theme === "catppuccin") {
+        document.body.classList.add("theme-catppuccin");
+      } else if (cfg.data.theme === "tokyo-night") {
+        document.body.classList.add("theme-tokyo-night");
+      } else if (cfg.data.theme === "solarized-dark") {
+        document.body.classList.add("theme-solarized-dark");
       }
       // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
       const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);
