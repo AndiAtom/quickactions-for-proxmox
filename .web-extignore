@@ -1,0 +1,9 @@
+.screenshot-mock
+screenshots
+web-ext-artifacts
+AI-HELPER.md
+AMO-STORE-LISTING.md
+CONTRIBUTING.md
+amo-metadata.json
+.git
+.gitignore

@@ -1,0 +1,8 @@
+{
+  "categories": {
+    "firefox": ["web-development"]
+  },
+  "version": {
+    "license": "Apache-2.0"
+  }
+}
