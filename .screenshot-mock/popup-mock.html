@@ -62,16 +62,15 @@
           }
           if (message.action === "getResources") {
             const GB = 1024 ** 3;
-            return Promise.resolve({
-              success: true,
-              data: [
-                { node: "pve", type: "lxc", vmid: 100, name: "docker-host", status: "running", cpu: 0.031, mem: 4 * GB, maxmem: 16 * GB, uptime: 37 * 86400 },
-                { node: "pve", type: "lxc", vmid: 101, name: "dns-server", status: "running", cpu: 0.016, mem: 0.5 * GB, maxmem: 2 * GB, uptime: 37 * 86400 },
-                { node: "pve", type: "lxc", vmid: 102, name: "cloud", status: "running", cpu: 0.057, mem: 12 * GB, maxmem: 32 * GB, uptime: 12 * 86400 },
-                { node: "pve", type: "lxc", vmid: 103, name: "home-automation", status: "running", cpu: 0.02, mem: 1 * GB, maxmem: 4 * GB, uptime: 21 * 86400 },
-                { node: "pve", type: "lxc", vmid: 104, name: "automation", status: "stopped", cpu: 0, mem: 0, maxmem: 8 * GB, uptime: 0 }
-              ]
-            });
+            // Gleiche Gäste/Werte wie auf popup-dark.png / popup-light.png (echte PVE-Daten)
+            const guests = [
+              { node: "hive", type: "lxc", vmid: 108, name: "automation",       status: "running", cpu: 0.01, mem: 0.18 * 8 * GB,  maxmem: 8 * GB,  uptime: 5 * 86400 },
+              { node: "hive", type: "lxc", vmid: 102, name: "cloud",             status: "running", cpu: 0.00, mem: 0.13 * 16 * GB, maxmem: 16 * GB, uptime: 37 * 86400 },
+              { node: "hive", type: "lxc", vmid: 101, name: "dns-server",       status: "running", cpu: 0.00, mem: 0.04 * 2 * GB,  maxmem: 2 * GB,  uptime: 37 * 86400 },
+              { node: "hive", type: "lxc", vmid: 100, name: "docker-host",      status: "running", cpu: 0.01, mem: 0.47 * 16 * GB, maxmem: 16 * GB, uptime: 37 * 86400 },
+              { node: "hive", type: "qemu", vmid: 103, name: "home-automation", status: "running", cpu: 0.02, mem: 1.01 * 4 * GB,  maxmem: 4 * GB,  uptime: 21 * 86400 }
+            ];
+            return Promise.resolve({ success: true, data: guests });
           }
           return Promise.resolve({ success: false, error: "Unknown action" });
         },
