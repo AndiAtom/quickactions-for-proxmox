@@ -180,7 +180,9 @@ function renderResource(res) {
 
   const meta = document.createElement("span");
   meta.className = "resource-meta";
-  meta.textContent = `${typeLabel} ${vmid}`;
+  meta.textContent = isRunning && res.uptime
+    ? `${typeLabel} ${vmid} · ↑ ${formatUptime(res.uptime)}`
+    : `${typeLabel} ${vmid}`;
   row.appendChild(meta);
 
   entry.appendChild(row);
@@ -235,6 +237,14 @@ function updateResourceEntry(entry, res) {
   if (name) {
     name.textContent = resName;
     name.title = `${node} / ${type}/${vmid}`;
+  }
+
+  // Meta-Zeile: Uptime live mithalten (Auto-Refresh)
+  const meta = entry.querySelector(".resource-meta");
+  if (meta) {
+    meta.textContent = isRunning && res.uptime
+      ? `${type === "lxc" ? "lxc" : "vm"} ${vmid} · ↑ ${formatUptime(res.uptime)}`
+      : `${type === "lxc" ? "lxc" : "vm"} ${vmid}`;
   }
 
   // --- Row 2: Bars aktualisieren (in-place, kein Neu-Bau) ---
