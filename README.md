@@ -48,6 +48,7 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 - **Cluster support** — Multi-node environments (backups are grouped per node automatically)
 - **9 themes** — Dark, Light, Nord, OLED (True Black), Dracula, Catppuccin Mocha, Tokyo Night, Solarized Dark & Monochrome — switchable in the settings
 - **Flexible sorting** — Alphabetically, by ID or by status, with running guests first (optional)
+- **Auto-refresh** — CPU and RAM values update automatically (configurable 5–60 seconds or disabled)
 
 ## Setup
 
@@ -81,6 +82,10 @@ The token needs permissions for: `VM.Audit`, `VM.PowerMgmt`, `VM.Snapshot`, `VM.
 
 This extension collects and transmits **no data**. All credentials stay locally in your browser (`browser.storage.local`). Communication happens exclusively between your browser and your Proxmox server — no third parties involved.
 
+# Install
+
+Get it from the [Firefox Add-ons store](https://addons.mozilla.org/firefox/addon/52707fd186ef4ffdb449/) — or grab a signed XPI from the [releases page](https://github.com/AndiAtom/quickactions-for-proxmox/releases).
+
 ## Development
 
 ```bash
@@ -89,6 +94,11 @@ web-ext lint    # validate
 web-ext run     # test in Firefox (hot reload)
 web-ext sign    # sign for distribution
 ```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## Disclaimer
 This little project was mostly developed by AI. To be specific: zAI GLM 5.3.
 
