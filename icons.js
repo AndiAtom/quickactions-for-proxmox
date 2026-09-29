@@ -1,20 +1,20 @@
 /**
- * icons.js — Inline-SVG-Icons für Popup und Options
+ * icons.js — inline SVG icons for popup and options
  *
- * Ersetzt Emojis (plattformabhängige Darstellung) durch konsistente,
- * stroke-basierte SVGs. Verwendung von currentColor, damit die Icons
- * per CSS eingefärbt werden (accent/danger).
+ * Replaces emojis (platform-dependent rendering) with consistent,
+ * stroke-based SVGs. Uses currentColor so the icons
+ * can be colored via CSS (accent/danger).
  *
- * Alle Icons: 16×16 viewBox, stroke-width 1.6, stroke-linecap round.
- * Komplett per DOM-API gebaut — kein innerHTML (web-ext lint sauber).
+ * All icons: 16×16 viewBox, stroke-width 1.6, stroke-linecap round.
+ * Built entirely via the DOM API — no innerHTML (web-ext lint clean).
  */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 /**
- * Hilfsfunktion: erstellt ein SVG-Element mit Attributen.
- * @param {string} tag - z.B. "path", "circle"
- * @param {Object} attrs - Attribut-Map
+ * Helper: creates an SVG element with attributes.
+ * @param {string} tag - e.g. "path", "circle"
+ * @param {Object} attrs - attribute map
  * @returns {SVGElement}
  */
 function svgEl(tag, attrs = {}) {
@@ -26,9 +26,9 @@ function svgEl(tag, attrs = {}) {
 }
 
 /**
- * Icon-Factory: baut das SVG per DOM-API.
- * @param {number} size - Breite/Höhe in px
- * @param {Function} draw - Callback, zeichnet die Formen in ein <g>
+ * Icon factory: builds the SVG via the DOM API.
+ * @param {number} size - width/height in px
+ * @param {Function} draw - callback that draws the shapes into a <g>
  * @returns {HTMLElement} - span.icon-wrapper
  */
 function buildIcon(size, draw) {
@@ -55,7 +55,7 @@ const strokeAttrs = {
 };
 
 const ICON_BUILDERS = {
-  /** Start — ausgefülltes Dreieck */
+  /** Start — filled triangle */
   start: () => buildIcon(14, (svg) => {
     svg.appendChild(svgEl("path", {
       d: "M4.5 2.8v10.4c0 .6.7 1 1.2.6l7.4-5.2c.5-.3.5-1 0-1.3L5.7 2.2c-.5-.3-1.2.1-1.2.6z",
@@ -63,7 +63,7 @@ const ICON_BUILDERS = {
     }));
   }),
 
-  /** Reboot — kreisender Pfeil */
+  /** Reboot — circular arrow */
   reboot: () => buildIcon(14, (svg) => {
     svg.appendChild(svgEl("path", {
       ...strokeAttrs,
@@ -75,7 +75,7 @@ const ICON_BUILDERS = {
     }));
   }),
 
-  /** Shutdown — Power-Symbol (passend zum Addon-Icon) */
+  /** Shutdown — power symbol (matching the add-on icon) */
   shutdown: () => buildIcon(14, (svg) => {
     svg.appendChild(svgEl("path", {
       ...strokeAttrs,
@@ -87,7 +87,7 @@ const ICON_BUILDERS = {
     }));
   }),
 
-  /** Snapshot — Kamera */
+  /** Snapshot — camera */
   snapshot: () => buildIcon(14, (svg) => {
     svg.appendChild(svgEl("path", {
       ...strokeAttrs,
@@ -99,7 +99,7 @@ const ICON_BUILDERS = {
     }));
   }),
 
-  /** Backup — Diskette */
+  /** Backup — floppy disk */
   backup: () => buildIcon(14, (svg) => {
     svg.appendChild(svgEl("path", {
       ...strokeAttrs,
@@ -109,7 +109,7 @@ const ICON_BUILDERS = {
     svg.appendChild(svgEl("path", { ...strokeAttrs, d: "M4.5 15v-4.5h7V15" }));
   }),
 
-  /** Refresh — zirkularer Pfeil (kleiner, für Footer-Textbuttons) */
+  /** Refresh — circular arrow (smaller, for footer text buttons) */
   refresh: () => buildIcon(12, (svg) => {
     svg.appendChild(svgEl("path", {
       ...strokeAttrs,
@@ -123,9 +123,9 @@ const ICON_BUILDERS = {
 };
 
 /**
- * Erstellt ein Icon-Element. Vollständig DOM-basiert (kein innerHTML).
- * @param {string} name - Key aus ICON_BUILDERS
- * @returns {HTMLElement} - span.icon-wrapper mit SVG
+ * Creates an icon element. Fully DOM-based (no innerHTML).
+ * @param {string} name - key from ICON_BUILDERS
+ * @returns {HTMLElement} - span.icon-wrapper with SVG
  */
 function createIcon(name) {
   const builder = ICON_BUILDERS[name];

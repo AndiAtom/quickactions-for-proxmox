@@ -1,44 +1,44 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="options.css">
-  <title>QuickActions — Einstellungen</title>
+  <title>QuickActions — Settings</title>
 </head>
 <body>
   <div class="container">
-    <h1>QuickActions for Proxmox Virtual Environment — Einstellungen</h1>
+    <h1>QuickActions for Proxmox Virtual Environment — Settings</h1>
 
     <section>
-      <h2>Verbindung</h2>
+      <h2>Connection</h2>
 
       <div class="field">
         <label for="pve-url">PVE URL</label>
         <input type="url" id="pve-url" placeholder="https://pve.example.com:8006" spellcheck="false">
-        <small>Base-URL deines Proxmox VE Servers inkl. Port (Standard: 8006)</small>
+        <small>Base URL of your Proxmox VE server including port (default: 8006)</small>
       </div>
 
       <div class="field">
         <label for="api-token-id">API Token ID</label>
         <input type="text" id="api-token-id" placeholder="user@pam!tokenname" spellcheck="false">
-        <small>Format: USER@REALM!TOKENID — anlegen in PVE unter Datacenter → API Tokens</small>
+        <small>Format: USER@REALM!TOKENID — create it in PVE under Datacenter → API Tokens</small>
       </div>
 
       <div class="field">
         <label for="api-token-secret">API Token Secret</label>
         <input type="password" id="api-token-secret" placeholder="UUID" spellcheck="false" autocomplete="off">
-        <small>Wird nur einmalig beim Anlegen des Tokens angezeigt. Bleibt lokal in deinem Browser.</small>
+        <small>Shown only once when the token is created. Stays local in your browser.</small>
       </div>
 
       <div class="field">
-        <button id="test-connection" class="btn-secondary">🔌 Verbindung testen</button>
+        <button id="test-connection" class="btn-secondary">🔌 Test connection</button>
         <span id="test-result" class="test-result"></span>
       </div>
     </section>
 
     <section>
-      <h2>Darstellung</h2>
+      <h2>Appearance</h2>
 
       <div class="field">
         <label for="theme">Theme</label>
@@ -53,45 +53,45 @@
           <option value="solarized-dark">Solarized Dark Theme</option>
           <option value="monochrome">Monochrome Theme</option>
         </select>
-        <small>Wird sofort nach dem Speichern angewendet</small>
+        <small>Applied immediately after saving</small>
       </div>
     </section>
 
     <section>
-      <h2>Sortierung</h2>
+      <h2>Sorting</h2>
 
       <div class="field">
-        <label for="sort-by">Gäste sortieren nach</label>
+        <label for="sort-by">Sort guests by</label>
         <select id="sort-by">
-          <option value="name">Alphabetisch (Name)</option>
-          <option value="vmid">Nach ID (VMID)</option>
-          <option value="status">Nach Status</option>
+          <option value="name">Alphabetical (name)</option>
+          <option value="vmid">By ID (VMID)</option>
+          <option value="status">By status</option>
         </select>
       </div>
 
       <div class="field field-inline">
         <input type="checkbox" id="status-first">
-        <label for="status-first" class="label-inline">Laufende Gäste zuerst</label>
-        <small>Gruppiert running/stopped — wirkt bei allen Sortierungen</small>
+        <label for="status-first" class="label-inline">Running guests first</label>
+        <small>Groups running/stopped — applies to all sortings</small>
       </div>
     </section>
 
     <section>
-      <h2>Aktualisierung</h2>
+      <h2>Refresh</h2>
 
       <div class="field">
-        <label for="refresh-interval">Automatisch aktualisieren</label>
+        <label for="refresh-interval">Auto-refresh</label>
         <select id="refresh-interval">
-          <option value="0">Deaktiviert</option>
-          <option value="5">Alle 5 Sekunden</option>
-          <option value="10">Alle 10 Sekunden</option>
-          <option value="15">Alle 15 Sekunden</option>
-          <option value="20">Alle 20 Sekunden</option>
-          <option value="30">Alle 30 Sekunden</option>
-          <option value="45">Alle 45 Sekunden</option>
-          <option value="60">Alle 60 Sekunden</option>
+          <option value="0">Disabled</option>
+          <option value="5">Every 5 seconds</option>
+          <option value="10">Every 10 seconds</option>
+          <option value="15">Every 15 seconds</option>
+          <option value="20">Every 20 seconds</option>
+          <option value="30">Every 30 seconds</option>
+          <option value="45">Every 45 seconds</option>
+          <option value="60">Every 60 seconds</option>
         </select>
-        <small>Aktualisiert CPU/RAM-Anzeige im geöffneten Popup</small>
+        <small>Updates the CPU/RAM display in the open popup</small>
       </div>
     </section>
 
@@ -99,16 +99,16 @@
       <h2>Backup</h2>
 
       <div class="field">
-        <label for="backup-storage">Backup-Storage</label>
+        <label for="backup-storage">Backup storage</label>
         <select id="backup-storage" disabled>
-          <option value="">— Zuerst Verbindung speichern —</option>
+          <option value="">— Save the connection first —</option>
         </select>
-        <small>Verfügbare Storages mit Backup-Content, aus PVE geladen</small>
+        <small>Available storages with backup content, loaded from PVE</small>
       </div>
     </section>
 
     <div class="actions">
-      <button id="save" class="btn-primary">Speichern</button>
+      <button id="save" class="btn-primary">Save</button>
       <span id="save-status" class="save-status"></span>
     </div>
   </div>

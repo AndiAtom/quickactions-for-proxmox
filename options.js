@@ -1,11 +1,11 @@
 /**
- * options.js — Settings-Page Logik
+ * options.js — settings page logic
  *
- * - Lädt/speichert Konfiguration (browser.storage.local)
- * - Fordert Host-Permission für die eingegebene PVE-URL an
+ * - Loads/saves the configuration (browser.storage.local)
+ * - Requests host permission for the entered PVE URL
  *   (optional_host_permissions → browser.permissions.request)
- * - Test-Verbindung gegen PVE
- * - Backup-Storage-Dropdown aus PVE (content-Filter "backup")
+ * - Connection test against PVE
+ * - Backup storage dropdown from PVE (content filter "backup")
  */
 
 // --- DOM References ---
@@ -23,7 +23,7 @@ const elSave = document.getElementById("save");
 const elSaveStatus = document.getElementById("save-status");
 
 /**
- * Schickt eine Message an den Service Worker.
+ * Sends a message to the service worker.
  * @param {Object} message
  * @returns {Promise<Object>}
  */
@@ -32,9 +32,9 @@ function sendMessage(message) {
 }
 
 /**
- * Extrahiert die Origin (scheme + host + port) aus einer URL.
+ * Extracts the origin (scheme + host + port) from a URL.
  * @param {string} url
- * @returns {string|null} - z.B. "https://pve.example.com:8006"
+ * @returns {string|null} - e.g. "https://pve.example.com:8006"
  */
 function extractOrigin(url) {
   try {
@@ -45,10 +45,10 @@ function extractOrigin(url) {
 }
 
 /**
- * Fordert die Host-Permission für die angegebene PVE-URL an.
- * Muss aus einem User-Geste (Klick) aufgerufen werden.
+ * Requests the host permission for the specified PVE URL.
+ * Must be called from a user gesture (click).
  * @param {string} pveUrl
- * @returns {Promise<boolean>} - true wenn Permission erteilt
+ * @returns {Promise<boolean>} - true if the permission is granted
  */
 async function requestHostPermission(pveUrl) {
   const origin = extractOrigin(pveUrl);
@@ -59,8 +59,8 @@ async function requestHostPermission(pveUrl) {
 }
 
 /**
- * Widerruft alle aktuell erteilten optional Host-Permissions.
- * (Zukünftige URL-Wechsel bekommen ihre eigene Permission.)
+ * Revokes all currently granted optional host permissions.
+ * (Future URL changes get their own permission.)
  */
 async function revokeAllHostPermissions() {
   const current = await browser.permissions.getAll();
@@ -70,7 +70,7 @@ async function revokeAllHostPermissions() {
 }
 
 /**
- * Lädt die gespeicherte Config und befüllt die Formular-Felder.
+ * Loads the stored config and fills the form fields.
  */
 async function loadConfig() {
   try {
@@ -84,26 +84,26 @@ async function loadConfig() {
       elTheme.value = config.theme || "dark";
       applyTheme(elTheme.value);
       elSortBy.value = config.sortBy || "name";
-      elStatusFirst.checked = config.statusFirst !== false; // Default: true
+      elStatusFirst.checked = config.statusFirst !== false; // default: true
       elRefreshInterval.value = String(config.refreshInterval !== undefined ? config.refreshInterval : 30);
 
-      // Storage-Dropdown aktivieren, wenn schon konfiguriert
+      // Enable the storage dropdown if already configured
       if (config.pveUrl && config.apiTokenId && config.apiTokenSecret) {
         elBackupStorage.disabled = false;
         await loadBackupStorages(config.backupStorage);
       }
     }
   } catch (err) {
-    showStatus(`Laden fehlgeschlagen: ${err.message}`, "error");
+    showStatus(`Loading failed: ${err.message}`, "error");
   }
 }
 
 /**
- * Testet die Verbindung zur PVE (Resources abfragen).
+ * Tests the connection to PVE (query resources).
  */
 async function testConnection() {
   elTestConnection.disabled = true;
-  elTestConnection.textContent = "Teste...";
+  elTestConnection.textContent = "Testing...";
   elTestResult.textContent = "";
 
   const pveUrl = elPveUrl.value.trim();
@@ -111,19 +111,19 @@ async function testConnection() {
   const tokenSecret = elTokenSecret.value.trim();
 
   if (!pveUrl || !tokenId || !tokenSecret) {
-    showTestResult("Bitte alle Verbindungsdaten ausfüllen", "error");
+    showTestResult("Please fill in all connection details", "error");
     return;
   }
 
-  // 1. Host-Permission einholen (User-Geste = dieser Klick)
+  // 1. Request the host permission (user gesture = this click)
   const granted = await requestHostPermission(pveUrl);
   if (!granted) {
-    showTestResult("Host-Permission abgelehnt — ohne Zugriff auf die PVE-URL funktioniert das Addon nicht", "error");
+    showTestResult("Host permission denied — the add-on does not work without access to the PVE URL", "error");
     return;
   }
 
-  // 2. Verbindung mit den aktuellen Formular-Werten testen
-  //    (Config temporär speichern, dann Resources laden)
+  // 2. Test the connection with the current form values
+  //    (temporarily save the config, then load resources)
   await sendMessage({
     action: "saveConfig",
     config: {
@@ -141,7 +141,7 @@ async function testConnection() {
   const res = await sendMessage({ action: "getResources" });
   if (res.success) {
     const count = Array.isArray(res.data) ? res.data.length : 0;
-    showTestResult(`✓ Verbindung OK — ${count} Ressourcen gefunden`, "success");
+    showTestResult(`✓ Connection OK — ${count} resources found`, "success");
     elBackupStorage.disabled = false;
     await loadBackupStorages(elBackupStorage.value);
   } else {
@@ -150,14 +150,14 @@ async function testConnection() {
 }
 
 /**
- * Lädt verfügbare Backup-Storages aus PVE und befüllt das Dropdown.
- * @param {string} [currentVal] - aktuell gewählter Wert wiederherstellen
+ * Loads available backup storages from PVE and fills the dropdown.
+ * @param {string} [currentVal] - restore the currently selected value
  */
 async function loadBackupStorages(currentVal) {
   try {
     const res = await sendMessage({ action: "getBackupStorages" });
     if (res.success) {
-      elBackupStorage.innerHTML = '<option value="">— Bitte wählen —</option>';
+      elBackupStorage.innerHTML = '<option value="">— Please choose —</option>';
       res.data.forEach(storage => {
         const opt = document.createElement("option");
         opt.value = storage.storage;
@@ -166,15 +166,15 @@ async function loadBackupStorages(currentVal) {
       });
       elBackupStorage.value = currentVal || "";
     } else {
-      showStatus(`Storage-Laden fehlgeschlagen: ${res.error}`, "error");
+      showStatus(`Loading storages failed: ${res.error}`, "error");
     }
   } catch (err) {
-    showStatus(`Storage-Laden fehlgeschlagen: ${err.message}`, "error");
+    showStatus(`Loading storages failed: ${err.message}`, "error");
   }
 }
 
 /**
- * Speichert die aktuelle Konfiguration (+ Host-Permission für URL).
+ * Saves the current configuration (+ host permission for the URL).
  */
 async function saveConfig() {
   const pveUrl = elPveUrl.value.trim();
@@ -182,20 +182,20 @@ async function saveConfig() {
   const tokenSecret = elTokenSecret.value.trim();
 
   if (!pveUrl || !tokenId || !tokenSecret) {
-    showStatus("Bitte alle Verbindungsdaten ausfüllen", "error");
+    showStatus("Please fill in all connection details", "error");
     return;
   }
 
-  // URL validieren
+  // Validate the URL
   if (!extractOrigin(pveUrl)) {
-    showStatus("Ungültige PVE URL", "error");
+    showStatus("Invalid PVE URL", "error");
     return;
   }
 
-  // Host-Permission für die URL einholen (falls noch nicht geschehen)
+  // Request the host permission for the URL (if not done yet)
   const granted = await requestHostPermission(pveUrl);
   if (!granted) {
-    showStatus("Host-Permission abgelehnt — Konfiguration nicht gespeichert", "error");
+    showStatus("Host permission denied — configuration not saved", "error");
     return;
   }
 
@@ -213,19 +213,19 @@ async function saveConfig() {
   try {
     const res = await sendMessage({ action: "saveConfig", config });
     if (res.success) {
-      showStatus("Gespeichert ✓", "success");
+      showStatus("Saved ✓", "success");
     } else {
-      showStatus(`Speichern fehlgeschlagen: ${res.error}`, "error");
+      showStatus(`Saving failed: ${res.error}`, "error");
     }
   } catch (err) {
-    showStatus(`Speichern fehlgeschlagen: ${err.message}`, "error");
+    showStatus(`Saving failed: ${err.message}`, "error");
   }
 }
 
 /**
- * Zeigt eine Statusmeldung an.
+ * Shows a status message.
  * @param {string} msg
- * @param {string} type - "success" oder "error"
+ * @param {string} type - "success" or "error"
  */
 function showStatus(msg, type) {
   elSaveStatus.textContent = msg;
@@ -237,7 +237,7 @@ function showStatus(msg, type) {
 }
 
 /**
- * Zeigt das Verbindungs-Test-Ergebnis an.
+ * Shows the connection test result.
  * @param {string} msg
  * @param {string} type
  */
@@ -245,11 +245,11 @@ function showTestResult(msg, type) {
   elTestResult.textContent = msg;
   elTestResult.className = `test-result ${type || ""}`;
   elTestConnection.disabled = false;
-  elTestConnection.textContent = "🔌 Verbindung testen";
+  elTestConnection.textContent = "🔌 Test connection";
 }
 
 /**
- * Wendet das Theme auf die Options-Page an.
+ * Applies the theme to the options page.
  * @param {string} theme - "dark" | "light" | "nord" | "oled" | "dracula" |
  *                         "catppuccin" | "tokyo-night" | "solarized-dark" |
  *                         "monochrome"
@@ -269,7 +269,7 @@ function applyTheme(theme) {
 elSave.addEventListener("click", saveConfig);
 elTestConnection.addEventListener("click", testConnection);
 
-// Theme-Live-Vorschau beim Wechsel des Dropdowns
+// Live theme preview when the dropdown changes
 elTheme.addEventListener("change", () => applyTheme(elTheme.value));
 
 // --- Init ---

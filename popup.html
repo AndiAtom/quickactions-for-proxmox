@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,33 +10,33 @@
   <!-- Header -->
   <div id="header">
     <span id="title">QuickActions</span>
-    <span id="status-indicator" class="status-unknown" title="Verbindung wird hergestellt..."></span>
+    <span id="status-indicator" class="status-unknown" title="Connecting..."></span>
   </div>
 
   <!-- Loading -->
   <div id="loading" class="hidden">
-    <span class="spinner"></span> Lade Ressourcen...
+    <span class="spinner"></span> Loading resources...
   </div>
 
   <!-- Error -->
   <div id="error" class="hidden"></div>
 
-  <!-- Ressourcen-Liste -->
+  <!-- Resource list -->
   <div id="resource-list"></div>
 
   <!-- Footer -->
   <div id="footer">
-    <button id="refresh-btn" title="Aktualisieren"></button>
-    <button id="backup-btn" title="Backup ausgewählter Gäste"></button>
+    <button id="refresh-btn" title="Refresh"></button>
+    <button id="backup-btn" title="Backup selected guests"></button>
   </div>
 
-  <!-- Confirm-Overlay (ersetzt window.confirm — das sprengt das Popup-Layout) -->
+  <!-- Confirm overlay (replaces window.confirm — it breaks the popup layout) -->
   <div id="confirm-overlay" class="hidden">
     <div id="confirm-box">
       <p id="confirm-message"></p>
       <div id="confirm-buttons">
-        <button id="confirm-cancel" class="btn-secondary">Abbrechen</button>
-        <button id="confirm-ok" class="btn-primary">Ausführen</button>
+        <button id="confirm-cancel" class="btn-secondary">Cancel</button>
+        <button id="confirm-ok" class="btn-primary">Run</button>
       </div>
     </div>
   </div>

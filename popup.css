@@ -17,7 +17,7 @@
   --popup-max-height: 500px;
 }
 
-/* Light Theme — angelehnt an Proxmox WebUI (weiß/grau + Proxmox-Orange) */
+/* Light theme — modeled after the Proxmox web UI (white/gray + Proxmox orange) */
 .theme-light {
   --bg: #f5f5f5;
   --bg-card: #ffffff;
@@ -45,8 +45,8 @@
   --radius: 6px;
 }
 
-/* OLED Theme — True Black (#000000), OLED-Pixel bleiben aus.
-   Struktur nur über Borders, Hover minimal (#0a0a0a). */
+/* OLED theme — True Black (#000000), OLED pixels stay off.
+   Structure via borders only, minimal hover (#0a0a0a). */
 .theme-oled {
   --bg: #000000;
   --bg-card: #000000;
@@ -116,9 +116,9 @@
   --radius: 6px;
 }
 
-/* Monochrome Theme — reine Graustufen, keine Farbe.
-   Status nur über Helligkeit: running = weiß leuchtend, stopped = dunkelgrau,
-   Overload (>100%) = hellgrau statt rot. */
+/* Monochrome theme — pure grayscale, no color.
+   Status via brightness only: running = bright white, stopped = dark gray,
+   overload (>100%) = light gray instead of red. */
 .theme-monochrome {
   --bg: #101010;
   --bg-card: #1a1a1a;
@@ -158,7 +158,7 @@ body {
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-card);
-  flex-shrink: 0; /* bleibt fixiert beim Scrollen der Liste */
+  flex-shrink: 0; /* stays fixed while the list scrolls */
 }
 
 #title {
@@ -217,17 +217,17 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Resource-Liste — der einzige scrollbare Bereich */
+/* Resource list — the only scrollable area */
 #resource-list {
   padding: 6px;
   flex: 1;
   overflow-y: auto;
-  min-height: 0; /* erlaubt Schrumpfen im Flex-Layout */
+  min-height: 0; /* allows shrinking in the flex layout */
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
 
-/* WebKit-Scrollbar (falls Chromium-basierte Browser) */
+/* WebKit scrollbar (for Chromium-based browsers, just in case) */
 #resource-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -260,7 +260,7 @@ body {
   border-color: var(--border);
 }
 
-/* Backup-Checkbox in der Resource-Zeile */
+/* Backup checkbox in the resource row */
 .backup-checkbox {
   appearance: none;
   -webkit-appearance: none;
@@ -335,7 +335,7 @@ body {
   padding-left: 16px;
   font-size: 10px;
   flex-wrap: nowrap;
-  /* Nicht aus dem Entry rauslaufen */
+  /* Do not overflow the entry */
   width: 100%;
   min-width: 0;
 }
@@ -344,7 +344,7 @@ body {
   display: flex;
   align-items: center;
   gap: 3px;
-  /* Flex-Shrinking erlauben */
+  /* Allow flex shrinking */
   min-width: 0;
 }
 
@@ -378,7 +378,7 @@ body {
   background: var(--warning);
 }
 
-/* Über 100% (z.B. RAM über zugewiesener Grenze) — Kennzeichnung */
+/* Above 100% (e.g. RAM beyond the assigned limit) — marker */
 .bar-fill.over {
   background: var(--danger);
 }
@@ -388,7 +388,7 @@ body {
   width: 100% !important;
 }
 
-/* N/A-Text bei stopped VMs */
+/* N/A text for stopped VMs */
 .bar-fill.na + .bar-text,
 .resource-entry .bar-group:has(.bar-fill.na) .bar-text {
   color: var(--fg-muted);
@@ -397,7 +397,7 @@ body {
 .bar-text {
   color: var(--fg-muted);
   font-size: 10px;
-  /* Kein min-width — sonst laufen 2 Bars aus dem Entry (100% + 100%) */
+  /* No min-width — otherwise 2 bars overflow the entry (100% + 100%) */
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -444,7 +444,7 @@ body {
   cursor: not-allowed;
 }
 
-/* Icon-Buttons: SVG vertikal ausrichten */
+/* Icon buttons: vertically align the SVG */
 .action-btn .icon,
 #footer button .icon {
   display: inline-flex;
@@ -456,7 +456,7 @@ body {
   display: block;
 }
 
-/* Button-Spinner (klein, in Action-Buttons) */
+/* Button spinner (small, inside action buttons) */
 .btn-spinner {
   display: inline-block;
   width: 12px;
@@ -468,7 +468,7 @@ body {
   vertical-align: middle;
 }
 
-/* Auto-Refresh-Tick: Refresh-Icon rotiert einmal kurz durch */
+/* Auto-refresh tick: the refresh icon rotates once briefly */
 @keyframes refresh-pulse {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -507,7 +507,7 @@ body {
   color: var(--fg-muted);
 }
 
-/* Confirm-Overlay — füllt das Popup, Dialog zentriert */
+/* Confirm overlay — fills the popup, dialog centered */
 #confirm-overlay {
   position: fixed;
   inset: 0;
@@ -583,7 +583,7 @@ body {
   padding: 10px 14px;
   border-top: 1px solid var(--border);
   background: var(--bg-card);
-  flex-shrink: 0; /* bleibt fixiert beim Scrollen der Liste */
+  flex-shrink: 0; /* stays fixed while the list scrolls */
 }
 
 #footer button {

@@ -1,14 +1,14 @@
 /**
- * popup.js — Popup-Logik
+ * popup.js — popup logic
  *
- * Rendert die Ressourcen-Liste im Flyout, behandelt Button-Klicks
- * und schickt Messages an den Service Worker (background.js).
+ * Renders the resource list in the flyout, handles button clicks
+ * and sends messages to the service worker (background.js).
  *
- * Spezifikation: AI-HELPER.md — Popup-Layout, Quick-Actions
+ * Specification: AI-HELPER.md — popup layout, quick actions
  *
- * UX-Entscheidungen (mit Andi abgestimmt):
- *   - Backup per Checkbox-Auswahl (nicht alle Gäste auf einmal)
- *   - Alle Aktionen mit Confirm-Dialog (Shutdown/Reboot/Start/Snapshot/Backup)
+ * UX decisions (agreed with Andi):
+ *   - Backup via checkbox selection (not all guests at once)
+ *   - All actions with a confirm dialog (shutdown/reboot/start/snapshot/backup)
  */
 
 // --- DOM References ---
@@ -25,7 +25,7 @@ let currentResources = [];
 // --- Helpers ---
 
 /**
- * Schickt eine Message an den Service Worker und gibt das Ergebnis zurück.
+ * Sends a message to the service worker and returns the result.
  * @param {Object} message
  * @returns {Promise<Object>} - { success: boolean, data?: any, error?: string }
  */
@@ -33,7 +33,7 @@ function sendMessage(message) {
   return browser.runtime.sendMessage(message);
 }
 
-// --- Confirm-Overlay (ersetzt window.confirm — nativer Dialog sprengt das Popup) ---
+// --- Confirm overlay (replaces window.confirm — the native dialog breaks the popup) ---
 
 const elConfirmOverlay = document.getElementById("confirm-overlay");
 const elConfirmMessage = document.getElementById("confirm-message");
@@ -41,10 +41,10 @@ const elConfirmOk = document.getElementById("confirm-ok");
 const elConfirmCancel = document.getElementById("confirm-cancel");
 
 /**
- * Zeigt einen Bestätigungsdialog als Overlay im Popup.
- * @param {string} title - Aktion, z.B. "Shutdown", "Backup"
- * @param {string} [detail] - Zusatzinfo (Gästename, Snapshot-Name, Gäste-Liste)
- * @returns {Promise<boolean>} - true wenn bestätigt
+ * Shows a confirmation dialog as an overlay in the popup.
+ * @param {string} title - action, e.g. "Shutdown", "Backup"
+ * @param {string} [detail] - extra info (guest name, snapshot name, guest list)
+ * @returns {Promise<boolean>} - true if confirmed
  */
 function confirmAction(title, detail) {
   return new Promise((resolve) => {
@@ -69,7 +69,7 @@ function confirmAction(title, detail) {
 }
 
 /**
- * Formatiert Sekunden-Uptime in "Xd Yh" oder "Yh Zm".
+ * Formats seconds of uptime as "Xd Yh" or "Yh Zm".
  * @param {number} seconds
  * @returns {string}
  */
@@ -84,10 +84,10 @@ function formatUptime(seconds) {
 }
 
 /**
- * RAM-Prozentsatz aus mem/maxmem.
+ * RAM percentage from mem/maxmem.
  * @param {number} mem
  * @param {number} maxmem
- * @returns {number} - 0-100, 0 wenn keine Daten
+ * @returns {number} - 0-100, 0 if no data
  */
 function memPercent(mem, maxmem) {
   if (!mem || !maxmem) return 0;
@@ -95,7 +95,7 @@ function memPercent(mem, maxmem) {
 }
 
 /**
- * Generiert einen Snapshot-Namen mit Timestamp.
+ * Generates a snapshot name with a timestamp.
  * Format: qa-YYYYMMDD-HHMMSS
  * @returns {string}
  */
@@ -108,10 +108,10 @@ function generateSnapshotName() {
 // --- Rendering ---
 
 /**
- * Baut eine CPU/RAM-Bar-Group per DOM-API (kein innerHTML — Lint-sauber).
- * @param {string} label - "CPU" oder "RAM"
+ * Builds a CPU/RAM bar group via the DOM API (no innerHTML — lint clean).
+ * @param {string} label - "CPU" or "RAM"
  * @param {number} pct - 0-100
- * @param {string} fillClass - CSS-Klasse für die Fill-Farbe
+ * @param {string} fillClass - CSS class for the fill color
  * @returns {HTMLElement}
  */
 function buildBarGroup(label, pct, fillClass) {
@@ -125,7 +125,7 @@ function buildBarGroup(label, pct, fillClass) {
   const track = document.createElement("div");
   track.className = "bar-track";
   const fill = document.createElement("div");
-  // >100% (z.B. RAM-Ballooning über zugewiesene Grenze): rot markieren, Breite klemmen
+  // >100% (e.g. RAM ballooning beyond the assigned limit): mark red, clamp width
   fill.className = `bar-fill ${fillClass}${pct > 100 ? " over" : ""}`;
   fill.style.width = `${Math.min(pct, 100)}%`;
   track.appendChild(fill);
@@ -139,7 +139,7 @@ function buildBarGroup(label, pct, fillClass) {
 }
 
 /**
- * Rendert eine einzelne Resource-Zeile (inkl. Backup-Checkbox).
+ * Renders a single resource row (including the backup checkbox).
  * @param {Object} res - Proxmox resource object
  * @returns {HTMLElement}
  */
@@ -153,15 +153,15 @@ function renderResource(res) {
   entry.className = "resource-entry";
   entry.dataset.vmid = vmid;
 
-  // --- Row 1: Checkbox + Dot + Name + Meta ---
+  // --- Row 1: checkbox + dot + name + meta ---
   const row = document.createElement("div");
   row.className = "resource-row";
 
-  // Backup-Checkbox
+  // Backup checkbox
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.className = "backup-checkbox";
-  checkbox.title = "Für Backup auswählen";
+  checkbox.title = "Select for backup";
   checkbox.addEventListener("change", updateBackupButton);
   row.appendChild(checkbox);
 
@@ -169,7 +169,7 @@ function renderResource(res) {
   dot.className = `resource-dot ${res.status}`;
   dot.title = isRunning
     ? `Uptime: ${formatUptime(res.uptime)}`
-    : "Gestoppt";
+    : "Stopped";
   row.appendChild(dot);
 
   const name = document.createElement("span");
@@ -187,7 +187,7 @@ function renderResource(res) {
 
   entry.appendChild(row);
 
-  // --- Row 2: CPU/RAM Bars (nur wenn running, sonst N/A) ---
+  // --- Row 2: CPU/RAM bars (only when running, otherwise N/A) ---
   const bars = document.createElement("div");
   bars.className = "resource-bars";
 
@@ -197,13 +197,13 @@ function renderResource(res) {
     bars.appendChild(buildBarGroup("CPU", cpuPct, "cpu"));
     bars.appendChild(buildBarGroup("RAM", ramPct, "ram"));
   } else {
-    // Gotcha #7: stopped VMs zeigen keine "0% voll"-Bars — N/A-Style
+    // Gotcha #7: stopped VMs do not show "0% full" bars — N/A style
     bars.appendChild(buildBarGroup("CPU", 0, "na"));
     bars.appendChild(buildBarGroup("RAM", 0, "na"));
   }
   entry.appendChild(bars);
 
-  // --- Row 3: Action-Buttons (shared mit Statuswechsel-Update) ---
+  // --- Row 3: action buttons (shared with the status-change update) ---
   entry.appendChild(buildActionButtons(res));
 
   entry.dataset.status = res.status;
@@ -211,12 +211,12 @@ function renderResource(res) {
 }
 
 /**
- * Aktualisiert einen bestehenden Resource-Entry in-place (Auto-Refresh V2):
- * Status-Dot, Uptime-Tooltip, CPU/RAM-Bars und — nur bei Statuswechsel —
- * die Action-Buttons. Buttons im Loading-Zustand (laufende Aktion) werden
- * nicht angefasst, damit das Feedback erhalten bleibt.
- * @param {HTMLElement} entry - der bestehende .resource-entry
- * @param {Object} res - neue Proxmox resource data
+ * Updates an existing resource entry in place (auto-refresh v2):
+ * status dot, uptime tooltip, CPU/RAM bars and — only on status change —
+ * the action buttons. Buttons in a loading state (action in progress) are
+ * left untouched so the feedback is preserved.
+ * @param {HTMLElement} entry - the existing .resource-entry
+ * @param {Object} res - new Proxmox resource data
  */
 function updateResourceEntry(entry, res) {
   const isRunning = res.status === "running";
@@ -224,13 +224,13 @@ function updateResourceEntry(entry, res) {
   const { node, type, vmid } = res;
   const resName = res.name || `VM ${vmid}`;
 
-  // --- Row 1: Dot + Name aktualisieren ---
+  // --- Row 1: update dot + name ---
   const dot = entry.querySelector(".resource-dot");
   if (dot) {
     dot.className = `resource-dot ${res.status}`;
     dot.title = isRunning
       ? `Uptime: ${formatUptime(res.uptime)}`
-      : "Gestoppt";
+      : "Stopped";
   }
 
   const name = entry.querySelector(".resource-name");
@@ -239,7 +239,7 @@ function updateResourceEntry(entry, res) {
     name.title = `${node} / ${type}/${vmid}`;
   }
 
-  // Meta-Zeile: Uptime live mithalten (Auto-Refresh)
+  // Meta line: keep uptime live (auto-refresh)
   const meta = entry.querySelector(".resource-meta");
   if (meta) {
     meta.textContent = isRunning && res.uptime
@@ -247,7 +247,7 @@ function updateResourceEntry(entry, res) {
       : `${type === "lxc" ? "lxc" : "vm"} ${vmid}`;
   }
 
-  // --- Row 2: Bars aktualisieren (in-place, kein Neu-Bau) ---
+  // --- Row 2: update bars in place (no rebuild) ---
   const bars = entry.querySelector(".resource-bars");
   if (bars) {
     if (isRunning && res.maxmem) {
@@ -256,18 +256,18 @@ function updateResourceEntry(entry, res) {
 
       const groups = bars.querySelectorAll(".bar-group");
       if (groups.length === 2) {
-        // Bestehende Bars updaten: Fill-Breite + Prozenttext
+        // Update existing bars: fill width + percentage text
         updateBarGroup(groups[0], cpuPct, false);
         updateBarGroup(groups[1], ramPct, false);
       } else {
-        // War N/A (stopped) → jetzt running: Bars neu bauen
+        // Was N/A (stopped) → now running: rebuild bars
         bars.replaceChildren(
           buildBarGroup("CPU", cpuPct, "cpu"),
           buildBarGroup("RAM", ramPct, "ram")
         );
       }
     } else {
-      // Stopped → N/A-Bars (falls noch nicht)
+      // Stopped → N/A bars (if not already)
       const groups = bars.querySelectorAll(".bar-group");
       if (groups.length === 2 && !groups[0].querySelector(".bar-fill.na")) {
         bars.replaceChildren(
@@ -278,11 +278,11 @@ function updateResourceEntry(entry, res) {
     }
   }
 
-  // --- Row 3: Buttons NUR bei Statuswechsel neu bauen ---
+  // --- Row 3: rebuild buttons ONLY on status change ---
   if (isRunning !== wasRunning) {
     const actions = entry.querySelector(".resource-actions");
     if (actions) {
-      // Loading-Buttons nicht überschreiben — laufende Aktion hat Vorrang
+      // Do not overwrite loading buttons — the running action takes precedence
       const hasLoading = actions.querySelector(".action-btn.loading");
       if (!hasLoading) {
         entry.replaceChild(buildActionButtons(res), actions);
@@ -294,10 +294,10 @@ function updateResourceEntry(entry, res) {
 }
 
 /**
- * Aktualisiert eine bestehende Bar-Group in-place.
+ * Updates an existing bar group in place.
  * @param {HTMLElement} group - .bar-group
  * @param {number} pct - 0-100
- * @param {boolean} na - N/A-Style
+ * @param {boolean} na - N/A style
  */
 function updateBarGroup(group, pct, na) {
   const fill = group.querySelector(".bar-fill");
@@ -310,7 +310,7 @@ function updateBarGroup(group, pct, na) {
     text.textContent = "—";
   } else {
     fill.className = fill.className.replace(" na", "");
-    // >100%: rot markieren (" over"), Breite auf 100% klemmen — Text zeigt echten Wert
+    // >100%: mark red (" over"), clamp width to 100% — text shows the real value
     if (pct > 100) {
       if (!fill.classList.contains("over")) fill.classList.add("over");
       fill.style.width = "100%";
@@ -323,7 +323,7 @@ function updateBarGroup(group, pct, na) {
 }
 
 /**
- * Baut die Action-Button-Zeile für einen Gast (bei Statuswechsel).
+ * Builds the action button row for a guest (on status change).
  * @param {Object} res - Proxmox resource data
  * @returns {HTMLElement} - .resource-actions div
  */
@@ -335,10 +335,10 @@ function buildActionButtons(res) {
   const actions = document.createElement("div");
   actions.className = "resource-actions";
 
-  // Snapshot (immer)
+  // Snapshot (always)
   const snapBtn = document.createElement("button");
   snapBtn.className = "action-btn";
-  snapBtn.title = "Snapshot erstellen";
+  snapBtn.title = "Create snapshot";
   snapBtn.appendChild(createIcon("snapshot"));
   snapBtn.addEventListener("click", () => handleSnapshot(node, type, vmid, resName, snapBtn));
   actions.appendChild(snapBtn);
@@ -370,7 +370,7 @@ function buildActionButtons(res) {
 }
 
 /**
- * Zeigt den "Nicht konfiguriert"-Zustand mit Link zu den Options.
+ * Shows the "not configured" state with a link to the options.
  */
 function renderNotConfigured() {
   elStatus.className = "status-unknown";
@@ -381,11 +381,11 @@ function renderNotConfigured() {
   box.className = "not-configured";
 
   const text = document.createElement("p");
-  text.textContent = "Noch nicht konfiguriert — PVE URL und API Token in den Einstellungen hinterlegen.";
+  text.textContent = "Not configured yet — enter the PVE URL and API token in the settings.";
 
   const btn = document.createElement("button");
   btn.className = "btn-primary";
-  btn.textContent = "⚙ Einstellungen öffnen";
+  btn.textContent = "⚙ Open settings";
   btn.addEventListener("click", () => {
     browser.runtime.openOptionsPage();
     window.close();
@@ -396,7 +396,7 @@ function renderNotConfigured() {
 }
 
 /**
- * Aktualisiert den Backup-Button-Zustand anhand der Checkbox-Auswahl.
+ * Updates the backup button state based on the checkbox selection.
  */
 function updateBackupButton() {
   const selected = document.querySelectorAll(".backup-checkbox:checked");
@@ -416,25 +416,25 @@ function updateBackupButton() {
 // --- Action Handlers ---
 
 /**
- * Setzt einen Action-Button in den Loading-Zustand (Spinner statt Icon).
- * @param {HTMLElement} btn - der geklickte Button
- * @returns {Function} - restore() zum Wiederherstellen
+ * Puts an action button into the loading state (spinner instead of icon).
+ * @param {HTMLElement} btn - the clicked button
+ * @returns {Function} - restore() to restore it
  */
 function setButtonLoading(btn) {
   if (!btn) return () => {};
-  // Child-Nodes für Restore sichern (DOM-Klone, kein innerHTML)
+  // Save child nodes for restore (DOM clones, no innerHTML)
   const originalChildren = Array.from(btn.childNodes).map(n => n.cloneNode(true));
   btn.disabled = true;
   btn.classList.add("loading");
 
-  // Spinner per DOM-API
+  // Spinner via DOM API
   const spinner = document.createElement("span");
   spinner.className = "btn-spinner";
   btn.replaceChildren(spinner);
 
   return () => {
-    // Falls der Button aus dem DOM entfernt wurde (Entry wurde neu gebaut),
-    // ist das Restore ein No-Op — der neue Button hat den richtigen Zustand.
+    // If the button was removed from the DOM (the entry was rebuilt),
+    // the restore is a no-op — the new button already has the right state.
     if (!btn.isConnected) return;
     btn.classList.remove("loading");
     btn.disabled = false;
@@ -451,17 +451,17 @@ async function handlePowerAction(node, type, vmid, powerAction, resName, btn) {
   try {
     const res = await sendMessage({ action: "powerAction", node, type, vmid, powerAction });
     if (res.success) {
-      // Update-Pfad (kein Voll-Render) — dieser Entry bekommt beim Statuswechsel
-      // frische Buttons; der Loading-Button bleibt bis dahin als Feedback stehen
+      // Update path (no full render) — this entry gets fresh buttons on status change;
+      // the loading button stays in place as feedback until then
       await loadResources(true);
-      restoreBtn(); // falls der Entry nicht neu gebaut wurde (Status gleich)
+      restoreBtn(); // in case the entry was not rebuilt (status unchanged)
     } else {
       restoreBtn();
-      showError(`${labels[powerAction]} fehlgeschlagen: ${res.error}`);
+      showError(`${labels[powerAction]} failed: ${res.error}`);
     }
   } catch (err) {
     restoreBtn();
-    showError(`${labels[powerAction]} fehlgeschlagen: ${err.message}`);
+    showError(`${labels[powerAction]} failed: ${err.message}`);
   }
 }
 
@@ -474,23 +474,23 @@ async function handleSnapshot(node, type, vmid, resName, btn) {
   try {
     const res = await sendMessage({ action: "createSnapshot", node, type, vmid, snapname });
     if (res.success) {
-      restoreBtn(); // Snapshot ändert den Status nicht — Button wiederherstellen
+      restoreBtn(); // a snapshot does not change the status — restore the button
     } else {
       restoreBtn();
-      showError(`Snapshot fehlgeschlagen: ${res.error}`);
+      showError(`Snapshot failed: ${res.error}`);
     }
   } catch (err) {
     restoreBtn();
-    showError(`Snapshot fehlgeschlagen: ${err.message}`);
+    showError(`Snapshot failed: ${err.message}`);
   }
 }
 
 async function handleBackup() {
-  // Ausgewählte Gäste aus Checkboxen sammeln
+  // Collect selected guests from the checkboxes
   const selected = document.querySelectorAll(".backup-checkbox:checked");
   if (selected.length === 0) return;
 
-  // vmid aus dem parent .resource-entry dataset lesen
+  // Read the vmid from the parent .resource-entry dataset
   const selectedVmids = new Set(
     Array.from(selected).map(cb => Number(cb.closest(".resource-entry").dataset.vmid))
   );
@@ -498,7 +498,7 @@ async function handleBackup() {
 
   if (selectedResources.length === 0) return;
 
-  const detail = `${selectedResources.length} Gäste: ${selectedResources.map(r => r.name).join(", ")}`;
+  const detail = `${selectedResources.length} guests: ${selectedResources.map(r => r.name).join(", ")}`;
   if (!(await confirmAction("Backup", detail))) return;
 
   const restoreBtn = setButtonLoading(elBackup);
@@ -506,38 +506,38 @@ async function handleBackup() {
     const config = await sendMessage({ action: "getConfig" });
     if (!config.success) {
       restoreBtn();
-      showError("Config konnte nicht geladen werden");
+      showError("Could not load the config");
       return;
     }
     const storage = config.data.backupStorage;
     if (!storage) {
       restoreBtn();
-      showError("Kein Backup-Storage konfiguriert — bitte in den Einstellungen wählen");
+      showError("No backup storage configured — please choose one in the settings");
       return;
     }
 
-    // VM-Liste mit Node pro VM (Cluster-safe, background.js gruppiert nach Node)
+    // VM list with node per VM (cluster-safe, background.js groups by node)
     const vmList = selectedResources.map(r => ({ node: r.node, vmid: r.vmid }));
     const res = await sendMessage({ action: "triggerBackup", vmList, storage });
     if (res.success) {
-      // Checkboxen nach Backup zurücksetzen
+      // Reset the checkboxes after the backup
       document.querySelectorAll(".backup-checkbox:checked").forEach(cb => { cb.checked = false; });
       updateBackupButton();
     } else {
       restoreBtn();
-      showError(`Backup fehlgeschlagen: ${res.error}`);
+      showError(`Backup failed: ${res.error}`);
     }
   } catch (err) {
     restoreBtn();
-    showError(`Backup fehlgeschlagen: ${err.message}`);
+    showError(`Backup failed: ${err.message}`);
   }
 }
 
 /**
- * Sortiert Ressourcen nach der konfigurierten Sortierung.
+ * Sorts resources according to the configured sorting.
  * @param {Array} resources
  * @param {string} sortBy - "name" | "vmid" | "status"
- * @param {boolean} statusFirst - laufende Gäste zuerst gruppieren
+ * @param {boolean} statusFirst - group running guests first
  * @returns {Array}
  */
 function sortResources(resources, sortBy, statusFirst) {
@@ -556,7 +556,7 @@ function sortResources(resources, sortBy, statusFirst) {
       break;
   }
 
-  // Status-Gruppierung als äußere Sortierung (stabil, erhält innere Ordnung)
+  // Status grouping as the outer sort (stable, preserves the inner order)
   if (statusFirst) {
     sorted.sort((a, b) => {
       const aRunning = a.status === "running" ? 0 : 1;
@@ -571,21 +571,21 @@ function sortResources(resources, sortBy, statusFirst) {
 // --- Load & Render ---
 
 /**
- * Lässt das Refresh-Icon im Footer kurz rotieren — Feedback für den
- * Auto-Refresh-Tick ohne großen Loading-Spinner.
+ * Rotates the refresh icon in the footer briefly — feedback for the
+ * auto-refresh tick without a big loading spinner.
  */
 function pulseRefreshIcon() {
   const icon = elRefresh.querySelector(".icon svg");
   if (!icon) return;
   icon.classList.remove("refresh-pulse");
-  // reflow erzwingen, damit die Animation neu startet
+  // Force a reflow so the animation restarts
   void icon.offsetWidth;
   icon.classList.add("refresh-pulse");
 }
 
 async function loadResources(isAutoRefresh = false) {
-  // Bei Auto-Refresh kein Loading-Spinner (flackert) — stattdessen
-  // rotiert das Refresh-Icon im Footer kurz als Tick-Feedback
+  // No loading spinner on auto-refresh (flickers) — instead
+  // the refresh icon in the footer rotates briefly as tick feedback
   if (isAutoRefresh) {
     pulseRefreshIcon();
   } else {
@@ -594,7 +594,7 @@ async function loadResources(isAutoRefresh = false) {
   elError.classList.add("hidden");
 
   try {
-    // Config-Check zuerst — ohne Config direkt Options-Hinweis
+    // Config check first — without config, go straight to the options hint
     const cfg = await sendMessage({ action: "getConfig" });
     if (!cfg.success) {
       showError(cfg.error);
@@ -609,7 +609,7 @@ async function loadResources(isAutoRefresh = false) {
     const res = await sendMessage({ action: "getResources" });
 
     if (!res.success) {
-      showError(res.error || "Unbekannter Fehler");
+      showError(res.error || "Unknown error");
       elStatus.className = "status-stopped";
       return;
     }
@@ -617,7 +617,7 @@ async function loadResources(isAutoRefresh = false) {
     elStatus.className = "status-running";
     elLoading.classList.add("hidden");
 
-    // Sortierung aus Config (sortBy + statusFirst)
+    // Sorting from config (sortBy + statusFirst)
     const sorted = sortResources(res.data, cfg.data.sortBy || "name", cfg.data.statusFirst !== false);
 
     currentResources = sorted;
@@ -625,12 +625,12 @@ async function loadResources(isAutoRefresh = false) {
     if (sorted.length === 0) {
       const empty = document.createElement("div");
       empty.className = "empty-list";
-      empty.textContent = "Keine Ressourcen gefunden";
+      empty.textContent = "No resources found";
       elList.replaceChildren(empty);
       return;
     }
 
-    // --- V2-Update-Pfad: bestehende Entries in-place aktualisieren ---
+    // --- V2 update path: update existing entries in place ---
     const existingEntries = new Map();
     document.querySelectorAll("#resource-list .resource-entry").forEach(e => {
       existingEntries.set(Number(e.dataset.vmid), e);
@@ -644,8 +644,8 @@ async function loadResources(isAutoRefresh = false) {
       [...existingEntries.keys()].some(vmid => !newVmids.has(vmid));
 
     if (hasListStructure && !structureChanged) {
-      // Reiner Daten-Update: Werte in bestehenden Entries aktualisieren.
-      // Reihenfolge/Checkboxes/Loading-Buttons bleiben unberührt.
+      // Pure data update: refresh values in the existing entries.
+      // Order/checkboxes/loading buttons remain untouched.
       sorted.forEach(r => {
         const entry = existingEntries.get(r.vmid);
         if (entry) updateResourceEntry(entry, r);
@@ -654,7 +654,7 @@ async function loadResources(isAutoRefresh = false) {
       return;
     }
 
-    // --- Voll-Render (erstes Laden oder Struktur geändert: VMs dazu/weg) ---
+    // --- Full render (first load or structure changed: VMs added/removed) ---
     const frag = document.createDocumentFragment();
     sorted.forEach(r => frag.appendChild(renderResource(r)));
     elList.replaceChildren(frag);
@@ -678,7 +678,7 @@ elBackup.addEventListener("click", handleBackup);
 
 // --- Init ---
 
-// Theme + Auto-Refresh-Interval aus Config (vor dem ersten Render, kein Flackern)
+// Theme + auto-refresh interval from config (before the first render, no flicker)
 (async () => {
   try {
     const cfg = await sendMessage({ action: "getConfig" });
@@ -700,16 +700,16 @@ elBackup.addEventListener("click", handleBackup);
       } else if (cfg.data.theme === "monochrome") {
         document.body.classList.add("theme-monochrome");
       }
-      // Auto-Refresh: Interval in Sekunden, 0 = deaktiviert
+      // Auto-refresh: interval in seconds, 0 = disabled
       const interval = Number(cfg.data.refreshInterval !== undefined ? cfg.data.refreshInterval : 30);
       if (interval > 0) {
         window.setInterval(() => loadResources(true), interval * 1000);
       }
     }
-  } catch { /* Default: dark, kein Auto-Refresh-Fehler */ }
+  } catch { /* Default: dark, no auto-refresh error */ }
 })();
 
-// Footer-Buttons mit Icons befüllen (Text kommt via updateBackupButton)
+// Fill the footer buttons with icons (text comes via updateBackupButton)
 elRefresh.appendChild(createIcon("refresh"));
 elRefresh.append(" Refresh");
 updateBackupButton();

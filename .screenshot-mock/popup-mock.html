@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,39 +10,39 @@
   <!-- Header -->
   <div id="header">
     <span id="title">QuickActions</span>
-    <span id="status-indicator" class="status-unknown" title="Verbindung wird hergestellt..."></span>
+    <span id="status-indicator" class="status-unknown" title="Connecting..."></span>
   </div>
 
   <!-- Loading -->
   <div id="loading" class="hidden">
-    <span class="spinner"></span> Lade Ressourcen...
+    <span class="spinner"></span> Loading resources...
   </div>
 
   <!-- Error -->
   <div id="error" class="hidden"></div>
 
-  <!-- Ressourcen-Liste -->
+  <!-- Resource list -->
   <div id="resource-list"></div>
 
   <!-- Footer -->
   <div id="footer">
-    <button id="refresh-btn" title="Aktualisieren"></button>
-    <button id="backup-btn" title="Backup ausgewählter Gäste"></button>
+    <button id="refresh-btn" title="Refresh"></button>
+    <button id="backup-btn" title="Backup selected guests"></button>
   </div>
 
-  <!-- Confirm-Overlay (ersetzt window.confirm — das sprengt das Popup-Layout) -->
+  <!-- Confirm overlay (replaces window.confirm — it breaks the popup layout) -->
   <div id="confirm-overlay" class="hidden">
     <div id="confirm-box">
       <p id="confirm-message"></p>
       <div id="confirm-buttons">
-        <button id="confirm-cancel" class="btn-secondary">Abbrechen</button>
-        <button id="confirm-ok" class="btn-primary">Ausführen</button>
+        <button id="confirm-cancel" class="btn-secondary">Cancel</button>
+        <button id="confirm-ok" class="btn-primary">Run</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Mock: browser-Namespace für Screenshot-Rendering außerhalb des Extension-Kontexts
+    // Mock: browser namespace for screenshot rendering outside the extension context
     window.browser = {
       runtime: {
         sendMessage: (message) => {
@@ -63,7 +63,7 @@
           }
           if (message.action === "getResources") {
             const GB = 1024 ** 3;
-            // Gleiche Gäste/Werte wie auf popup-dark.png / popup-light.png (echte PVE-Daten)
+            // Same guests/values as on popup-dark.png / popup-light.png (real PVE data)
             const guests = [
               { node: "hive", type: "lxc", vmid: 108, name: "automation",       status: "running", cpu: 0.01, mem: 0.18 * 8 * GB,  maxmem: 8 * GB,  uptime: 5 * 86400 },
               { node: "hive", type: "lxc", vmid: 102, name: "cloud",             status: "running", cpu: 0.00, mem: 0.13 * 16 * GB, maxmem: 16 * GB, uptime: 37 * 86400 },
