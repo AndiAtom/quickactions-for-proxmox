@@ -549,8 +549,36 @@ function tempClass(temp) {
 }
 
 /**
+ * Formats bytes human-readable (binary units: KiB…TiB).
+ * @param {number} bytes
+ * @returns {string} - e.g. "13.0 GiB", "2.6 TiB"
+ */
+function formatBytes(bytes) {
+  if (!bytes || bytes <= 0) return "0 B";
+  const units = ["B", "KiB", "MiB", "GiB", "TiB"];
+  let val = bytes;
+  let unit = 0;
+  while (val >= 1024 && unit < units.length - 1) {
+    val /= 1024;
+    unit++;
+  }
+  return `${val >= 100 ? Math.round(val) : val.toFixed(1)} ${units[unit]}`;
+}
+
+/**
+ * Percentage for display: one decimal place below 1% (a rootfs that is
+ * 0.5% full would otherwise round to a useless "0%"), integer above.
+ * @param {number} raw - 0-100 (float)
+ * @returns {number} - formatted for display
+ */
+function displayPct(raw) {
+  if (raw < 1) return Math.round(raw * 10) / 10;
+  return Math.round(raw);
+}
+
+/**
  * Builds the 4 system-monitor bars for the host entry:
- * CPU %, RAM %, CPU temp °C, disk usage %.
+ * CPU %, RAM %, CPU temp °C, disk usage % — 2 per row (CSS grid).
  * @param {Object} host - host data from getHostStatus()
  * @returns {HTMLElement} - .resource-bars div with 4 bar groups
  */
@@ -561,10 +589,10 @@ function buildHostBars(host) {
   const online = host.status === "online";
 
   if (online) {
-    const cpuPct = Math.round((host.cpu || 0) * 100);
+    const cpuPct = displayPct((host.cpu || 0) * 100);
     bars.appendChild(buildBarGroup("CPU", cpuPct, "cpu"));
 
-    const ramPct = memPercent(host.mem, host.maxmem);
+    const ramPct = displayPct(memPercent(host.mem, host.maxmem));
     bars.appendChild(buildBarGroup("RAM", ramPct, "ram"));
 
     if (host.cpuTemp !== null && host.cpuTemp !== undefined) {
@@ -577,8 +605,12 @@ function buildHostBars(host) {
     }
 
     if (host.disk && host.disk.total) {
-      const diskPct = Math.round((host.disk.used / host.disk.total) * 100);
-      bars.appendChild(buildBarGroup("DISK", diskPct, "disk"));
+      const diskRaw = (host.disk.used / host.disk.total) * 100;
+      const diskPct = displayPct(diskRaw);
+      const diskGroup = buildBarGroup("DISK", diskPct, "disk");
+      // Absolute values as tooltip — "0.5%" alone is meaningless
+      diskGroup.title = `${formatBytes(host.disk.used)} / ${formatBytes(host.disk.total)}`;
+      bars.appendChild(diskGroup);
     } else {
       bars.appendChild(buildBarGroup("DISK", 0, "na"));
     }

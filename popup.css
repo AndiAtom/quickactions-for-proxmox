@@ -239,12 +239,18 @@ body {
 }
 
 .host-entry .resource-bars {
-  flex-wrap: wrap;
+  /* 2 bars per row — grid instead of flex-wrap: fixed 2-column layout,
+     no rounding surprises from gap+percentage widths */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 8px;
   row-gap: 4px;
+  padding-left: 16px;
+  align-items: center;
 }
 
 .host-entry .bar-group {
-  width: 50%;
+  width: auto;
 }
 
 .host-entry .bar-track {
