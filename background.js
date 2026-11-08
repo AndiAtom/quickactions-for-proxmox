@@ -167,6 +167,111 @@ async function getBackupStorages(config) {
   return storages.filter(s => (s.content || "").includes("backup"));
 }
 
+// --- Host (PVE node) system monitor ---
+
+/**
+ * Extracts the CPU package temperature from the lm-sensors JSON output
+ * (field "sensorsOutput" of /nodes/{node}/status, PVE 9.2+, verified live).
+ *
+ * Structure: { "<chip>": { "Adapter": "...", "<feature>": { "tempN_input": 28.0, ... } } }
+ * Strategy:
+ *   1. Only known CPU chip drivers count (coretemp, k10temp, zenpower, cpu_thermal) —
+ *      other chips (e.g. jc42 memory sensor) would report a misleading value.
+ *   2. Within the chip: "Package id 0" / "Tctl" / "Tdie" first, then the first
+ *      feature that has a tempN_input.
+ *   3. No CPU chip found → null (the UI shows N/A instead of a wrong value).
+ * @param {string} sensorsOutput - JSON string from lm-sensors (or null/undefined)
+ * @returns {number|null} - temperature in °C, or null if not determinable
+ */
+function parseCpuTemp(sensorsOutput) {
+  if (!sensorsOutput) return null;
+  let chips;
+  try {
+    chips = JSON.parse(sensorsOutput);
+  } catch {
+    return null;
+  }
+  if (!chips || typeof chips !== "object") return null;
+
+  /** Reads the first plausible tempN_input from a sensor feature. */
+  const featureTemp = (feature) => {
+    if (!feature || typeof feature !== "object") return null;
+    for (const [key, value] of Object.entries(feature)) {
+      if (/^temp\d+_input$/.test(key) && typeof value === "number" && value > 0 && value < 150) {
+        return value;
+      }
+    }
+    return null;
+  };
+
+  const cpuChipPattern = /coretemp|k10temp|zenpower|cpu_thermal/i;
+  const preferredFeature = /^(Package id \d+|Tctl|Tdie)$/i;
+
+  for (const [chip, data] of Object.entries(chips)) {
+    if (!cpuChipPattern.test(chip)) continue;
+    const features = Object.entries(data || {}).filter(([name]) => name !== "Adapter");
+
+    // Preferred features first (CPU package temperature, not a single core)
+    for (const [name, feature] of features) {
+      if (preferredFeature.test(name)) {
+        const temp = featureTemp(feature);
+        if (temp !== null) return temp;
+      }
+    }
+    // Fallback within the chip: first feature with a temperature
+    for (const [, feature] of features) {
+      const temp = featureTemp(feature);
+      if (temp !== null) return temp;
+    }
+  }
+  return null;
+}
+
+/**
+ * Loads the PVE host(s) themselves — read-only system monitor data:
+ * CPU, RAM and uptime from /nodes; rootfs disk usage, PVE version and
+ * CPU temperature from /nodes/{node}/status (one call per node).
+ * A failed /status call does NOT abort the others — the host entry
+ * then renders with partial data (statusError set).
+ * @param {Object} config
+ * @returns {Promise<Array<Object>>} - [{ node, status, cpu, mem, maxmem,
+ *   uptime, pveversion, disk: {used, total}|null, cpuTemp: number|null,
+ *   statusError?: string }]
+ */
+async function getHostStatus(config) {
+  const nodes = await pveApiCall("/api2/json/nodes", {}, config);
+  const hosts = [];
+
+  for (const n of nodes) {
+    const host = {
+      node: n.node,
+      status: n.status || "unknown", // "online" | "offline" | "unknown"
+      cpu: n.cpu || 0,
+      mem: n.mem || 0,
+      maxmem: n.maxmem || 0,
+      uptime: n.uptime || 0,
+      pveversion: null, // e.g. "pve-manager/9.2.24/66bc407c6d90a67a"
+      disk: null,      // { used, total } — rootfs
+      cpuTemp: null    // °C
+    };
+
+    if (n.status === "online") {
+      try {
+        const st = await pveApiCall(`/api2/json/nodes/${encodeURIComponent(n.node)}/status`, {}, config);
+        if (st.rootfs && st.rootfs.total) {
+          host.disk = { used: st.rootfs.used || 0, total: st.rootfs.total };
+        }
+        if (st.pveversion) host.pveversion = st.pveversion;
+        host.cpuTemp = parseCpuTemp(st.sensorsOutput);
+      } catch (err) {
+        host.statusError = err.message; // partial data — entry still renders
+      }
+    }
+    hosts.push(host);
+  }
+  return hosts;
+}
+
 /**
  * Executes a power action (start/stop/reboot/shutdown).
  * @param {Object} config
@@ -248,6 +353,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       switch (message.action) {
         case "getResources": {
           const data = await getResources(config);
+          sendResponse({ success: true, data });
+          break;
+        }
+
+        case "getHostStatus": {
+          const data = await getHostStatus(config);
           sendResponse({ success: true, data });
           break;
         }

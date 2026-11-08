@@ -109,12 +109,13 @@ function generateSnapshotName() {
 
 /**
  * Builds a CPU/RAM bar group via the DOM API (no innerHTML — lint clean).
- * @param {string} label - "CPU" or "RAM"
+ * @param {string} label - "CPU", "RAM", "TEMP" or "DISK"
  * @param {number} pct - 0-100
  * @param {string} fillClass - CSS class for the fill color
+ * @param {string} [unit="%"] - unit suffix for the text (TEMP uses "°")
  * @returns {HTMLElement}
  */
-function buildBarGroup(label, pct, fillClass) {
+function buildBarGroup(label, pct, fillClass, unit = "%") {
   const group = document.createElement("div");
   group.className = "bar-group";
 
@@ -132,7 +133,7 @@ function buildBarGroup(label, pct, fillClass) {
 
   const text = document.createElement("span");
   text.className = "bar-text";
-  text.textContent = fillClass === "na" ? "—" : `${pct}%`;
+  text.textContent = fillClass === "na" ? "—" : `${pct}${unit}`;
 
   group.append(labelEl, track, text);
   return group;
@@ -533,6 +534,184 @@ async function handleBackup() {
   }
 }
 
+// --- Host (PVE node) monitor entry ---
+
+/**
+ * CPU temperature bar fill class: green below 60 °C, yellow below 75 °C,
+ * red from 75 °C — traffic-light style independent of the theme accent color.
+ * @param {number} temp - °C
+ * @returns {string} - "temp-cool" | "temp-warm" | "temp-hot"
+ */
+function tempClass(temp) {
+  if (temp >= 75) return "temp-hot";
+  if (temp >= 60) return "temp-warm";
+  return "temp-cool";
+}
+
+/**
+ * Builds the 4 system-monitor bars for the host entry:
+ * CPU %, RAM %, CPU temp °C, disk usage %.
+ * @param {Object} host - host data from getHostStatus()
+ * @returns {HTMLElement} - .resource-bars div with 4 bar groups
+ */
+function buildHostBars(host) {
+  const bars = document.createElement("div");
+  bars.className = "resource-bars";
+
+  const online = host.status === "online";
+
+  if (online) {
+    const cpuPct = Math.round((host.cpu || 0) * 100);
+    bars.appendChild(buildBarGroup("CPU", cpuPct, "cpu"));
+
+    const ramPct = memPercent(host.mem, host.maxmem);
+    bars.appendChild(buildBarGroup("RAM", ramPct, "ram"));
+
+    if (host.cpuTemp !== null && host.cpuTemp !== undefined) {
+      const temp = Math.round(host.cpuTemp);
+      // Bar scaled: 100 °C = full track (temps above 100 are clamped, marked red)
+      bars.appendChild(buildBarGroup("TEMP", Math.min(temp, 100), tempClass(temp), "°"));
+    } else {
+      // lm-sensors without a CPU chip (or not installed) → N/A
+      bars.appendChild(buildBarGroup("TEMP", 0, "na"));
+    }
+
+    if (host.disk && host.disk.total) {
+      const diskPct = Math.round((host.disk.used / host.disk.total) * 100);
+      bars.appendChild(buildBarGroup("DISK", diskPct, "disk"));
+    } else {
+      bars.appendChild(buildBarGroup("DISK", 0, "na"));
+    }
+  } else {
+    // Node offline/unknown → all N/A
+    bars.appendChild(buildBarGroup("CPU", 0, "na"));
+    bars.appendChild(buildBarGroup("RAM", 0, "na"));
+    bars.appendChild(buildBarGroup("TEMP", 0, "na"));
+    bars.appendChild(buildBarGroup("DISK", 0, "na"));
+  }
+
+  return bars;
+}
+
+/**
+ * Renders a host entry (PVE node itself) — display only, no controls:
+ * no backup checkbox, no action buttons. Sorted and pinned above the guests.
+ * @param {Object} host - host data from getHostStatus()
+ * @returns {HTMLElement}
+ */
+function renderHostEntry(host) {
+  const entry = document.createElement("div");
+  entry.className = "resource-entry host-entry";
+  entry.dataset.node = host.node;
+
+  const row = document.createElement("div");
+  row.className = "resource-row";
+
+  // Status dot (no checkbox — the host is not backup-selectable)
+  const dot = document.createElement("span");
+  dot.className = `resource-dot ${host.status === "online" ? "running" : "stopped"}`;
+  dot.title = host.status === "online" ? `Uptime: ${formatUptime(host.uptime)}` : host.status;
+  row.appendChild(dot);
+
+  // Server icon + node name — visually distinct from the guests
+  const icon = createIcon("host");
+  icon.classList.add("host-icon");
+  row.appendChild(icon);
+
+  const name = document.createElement("span");
+  name.className = "resource-name";
+  name.textContent = host.node;
+  name.title = host.pveversion || host.node;
+  row.appendChild(name);
+
+  // Meta line: uptime live, like the guests
+  const meta = document.createElement("span");
+  meta.className = "resource-meta";
+  meta.textContent = host.status === "online" && host.uptime
+    ? `host · ↑ ${formatUptime(host.uptime)}`
+    : `host · ${host.status}`;
+  row.appendChild(meta);
+
+  entry.appendChild(row);
+  entry.appendChild(buildHostBars(host));
+
+  // Partial data (e.g. /status call failed): indicate via title, do not block
+  if (host.statusError) {
+    entry.title = `Partial data: ${host.statusError}`;
+  }
+
+  entry.dataset.status = host.status;
+  return entry;
+}
+
+/**
+ * Updates an existing host entry in place (auto-refresh): status dot,
+ * uptime, version tooltip and the 4 bars.
+ * @param {HTMLElement} entry - the existing .host-entry
+ * @param {Object} host - new host data
+ */
+function updateHostEntry(entry, host) {
+  const dot = entry.querySelector(".resource-dot");
+  if (dot) {
+    dot.className = `resource-dot ${host.status === "online" ? "running" : "stopped"}`;
+    dot.title = host.status === "online" ? `Uptime: ${formatUptime(host.uptime)}` : host.status;
+  }
+
+  const name = entry.querySelector(".resource-name");
+  if (name) name.title = host.pveversion || host.node;
+
+  const meta = entry.querySelector(".resource-meta");
+  if (meta) {
+    meta.textContent = host.status === "online" && host.uptime
+      ? `host · ↑ ${formatUptime(host.uptime)}`
+      : `host · ${host.status}`;
+  }
+
+  const bars = entry.querySelector(".resource-bars");
+  if (bars) bars.replaceWith(buildHostBars(host));
+
+  if (host.statusError) {
+    entry.title = `Partial data: ${host.statusError}`;
+  } else {
+    entry.removeAttribute("title");
+  }
+
+  entry.dataset.status = host.status;
+}
+
+/**
+ * Loads the host monitor data and renders/updates the host entries
+ * at the top of the resource list. Failures are non-fatal — the guest
+ * list works without host data (error via title on the entry).
+ * @returns {Promise<void>}
+ */
+async function loadHostEntries() {
+  try {
+    const res = await sendMessage({ action: "getHostStatus" });
+    if (!res.success || !Array.isArray(res.data) || res.data.length === 0) return;
+
+    const hostList = document.getElementById("host-list");
+    if (!hostList) return;
+
+    const existing = new Map();
+    hostList.querySelectorAll(".host-entry").forEach(e => existing.set(e.dataset.node, e));
+
+    const frag = document.createDocumentFragment();
+    for (const host of res.data) {
+      const entry = existing.get(host.node);
+      if (entry && entry.dataset.status === host.status) {
+        updateHostEntry(entry, host);
+        frag.appendChild(entry); // keep position, update in place
+      } else {
+        frag.appendChild(renderHostEntry(host)); // new or status changed → rebuild
+      }
+    }
+    hostList.replaceChildren(frag);
+  } catch {
+    /* Host data is a bonus — errors do not affect the guest list */
+  }
+}
+
 /**
  * Sorts resources according to the configured sorting.
  * @param {Array} resources
@@ -616,6 +795,9 @@ async function loadResources(isAutoRefresh = false) {
 
     elStatus.className = "status-running";
     elLoading.classList.add("hidden");
+
+    // Host monitor (parallel to the guest list — failures are non-fatal there)
+    loadHostEntries();
 
     // Sorting from config (sortBy + statusFirst)
     const sorted = sortResources(res.data, cfg.data.sortBy || "name", cfg.data.statusFirst !== false);

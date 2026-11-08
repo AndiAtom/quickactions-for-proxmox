@@ -227,6 +227,41 @@ body {
   scrollbar-color: var(--border) transparent;
 }
 
+/* Host (PVE node) monitor — pinned above the resource list */
+#host-list {
+  padding: 6px 6px 0 6px;
+  flex-shrink: 0;
+}
+
+.host-entry {
+  border: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+
+.host-entry .resource-bars {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+.host-entry .bar-group {
+  width: 50%;
+}
+
+.host-entry .bar-track {
+  width: auto;
+  flex: 1;
+}
+
+.host-icon {
+  color: var(--accent);
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.host-icon svg {
+  display: block;
+}
+
 /* WebKit scrollbar (for Chromium-based browsers, just in case) */
 #resource-list::-webkit-scrollbar {
   width: 6px;
@@ -392,6 +427,23 @@ body {
 .bar-fill.na + .bar-text,
 .resource-entry .bar-group:has(.bar-fill.na) .bar-text {
   color: var(--fg-muted);
+}
+
+/* Host bars: TEMP (traffic light) and DISK (muted violet) */
+.bar-fill.temp-cool {
+  background: #4caf7d; /* green — fixed, independent of the theme accent */
+}
+
+.bar-fill.temp-warm {
+  background: var(--warning);
+}
+
+.bar-fill.temp-hot {
+  background: var(--danger);
+}
+
+.bar-fill.disk {
+  background: #7c6fbb; /* muted violet — distinct from CPU (accent) and RAM (warning) */
 }
 
 .bar-text {

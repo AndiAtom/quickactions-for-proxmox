@@ -119,6 +119,32 @@ const ICON_BUILDERS = {
       ...strokeAttrs,
       d: "M13.7 1.8v2.9h-2.9"
     }));
+  }),
+
+  /** Host — server rack (PVE node itself, distinguishable from the guests) */
+  host: () => buildIcon(14, (svg) => {
+    // Upper rack unit
+    svg.appendChild(svgEl("rect", {
+      ...strokeAttrs,
+      x: 1.8, y: 1.8, width: 12.4, height: 5, rx: 1
+    }));
+    // Lower rack unit
+    svg.appendChild(svgEl("rect", {
+      ...strokeAttrs,
+      x: 1.8, y: 9.2, width: 12.4, height: 5, rx: 1
+    }));
+    // Status LEDs
+    svg.appendChild(svgEl("circle", {
+      fill: "currentColor",
+      cx: 4.2, cy: 4.3, r: 0.9
+    }));
+    svg.appendChild(svgEl("circle", {
+      fill: "currentColor",
+      cx: 4.2, cy: 11.7, r: 0.9
+    }));
+    // Ventilation slots
+    svg.appendChild(svgEl("path", { ...strokeAttrs, d: "M8.5 3.8h3.8" }));
+    svg.appendChild(svgEl("path", { ...strokeAttrs, d: "M8.5 11.2h3.8" }));
   })
 };
 
