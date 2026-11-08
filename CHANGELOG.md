@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.3.2 — Host System Monitor RC (2026-11-08, unlisted)
+
+> **Note:** Unlisted release candidate for the v0.4.0 feature line — identical
+> versioning scheme as 0.3.1 (self-distribution build, not part of the store release).
+
+- **Host system monitor** — the PVE node itself now appears at the top of the
+  popup: CPU load, RAM usage, CPU package temperature (°C) and rootfs disk
+  usage, all with bars, live on auto-refresh. Display only — no power buttons,
+  no backup checkbox (host control may come later)
+- CPU temperature from `lm-sensors` (via `/nodes/{node}/status` →
+  `sensorsOutput`): prefers `Package id 0`/`Tctl`/`Tdie` on coretemp/k10temp/
+  zenpower chips, traffic-light colors (green < 60 °C, yellow < 75 °C, red
+  above), N/A if no CPU sensor is available
+- Multi-node clusters: one host entry per node; offline nodes show N/A bars
+- New server-rack icon distinguishes the host from the guests
+- PVE version as tooltip on the host name, uptime in the meta line
+
 ## v0.3.0 — Public AMO Release (2026-09-19)
 
 - **Published on the Firefox Add-ons (AMO) store** as a listed add-on — approved 2026-09-22.
