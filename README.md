@@ -41,6 +41,7 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 
 ## Features
 
+- **Host system monitor** — the PVE node itself at the top of the popup: CPU load, RAM, CPU package temperature (°C) and rootfs disk usage — display only, live on auto-refresh
 - **Live overview** — All guests of your Proxmox cluster with status, uptime, CPU and RAM usage
 - **Power actions** — Start, reboot and shutdown directly from the popup (with confirmation dialog)
 - **Snapshots** — One click creates a snapshot with automatic naming
@@ -48,7 +49,7 @@ A Firefox extension that puts your entire Proxmox VE cluster in your toolbar —
 - **Cluster support** — Multi-node environments (backups are grouped per node automatically)
 - **9 themes** — Dark, Light, Nord, OLED (True Black), Dracula, Catppuccin Mocha, Tokyo Night, Solarized Dark & Monochrome — switchable in the settings
 - **Flexible sorting** — Alphabetically, by ID or by status, with running guests first (optional)
-- **Auto-refresh** — CPU and RAM values update automatically (configurable 5–60 seconds or disabled)
+- **Auto-refresh** — Host and guest values update automatically (configurable 5–60 seconds or disabled)
 
 ## Setup
 

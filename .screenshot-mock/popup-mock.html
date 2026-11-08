@@ -21,6 +21,9 @@
   <!-- Error -->
   <div id="error" class="hidden"></div>
 
+  <!-- Host (PVE node) system monitor — display only, pinned above the guests -->
+  <div id="host-list"></div>
+
   <!-- Resource list -->
   <div id="resource-list"></div>
 
@@ -72,6 +75,25 @@
               { node: "hive", type: "qemu", vmid: 103, name: "home-automation", status: "running", cpu: 0.02, mem: 1.01 * 4 * GB,  maxmem: 4 * GB,  uptime: 21 * 86400 }
             ];
             return Promise.resolve({ success: true, data: guests });
+          }
+          if (message.action === "getHostStatus") {
+            // Same values as the real HIVE host (live data, 2026-11-08)
+            const GB = 1024 ** 3;
+            const TB = 1024 ** 4;
+            return Promise.resolve({
+              success: true,
+              data: [{
+                node: "hive",
+                status: "online",
+                cpu: 0.04,                 // 4%
+                mem: 0.37 * 64 * GB,        // 37%
+                maxmem: 64 * GB,
+                uptime: 37 * 86400,         // 37d — matches the guests
+                pveversion: "pve-manager/9.2.24/66bc407c6d90a67a",
+                disk: { used: 13 * GB, total: 2.6 * TB },  // → 0.5%
+                cpuTemp: 31                 // °C
+              }]
+            });
           }
           return Promise.resolve({ success: false, error: "Unknown action" });
         },

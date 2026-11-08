@@ -1,21 +1,28 @@
 # Changelog
 
-## v0.3.2 — Host System Monitor RC (2026-11-08, unlisted)
-
-> **Note:** Unlisted release candidate for the v0.4.0 feature line — identical
-> versioning scheme as 0.3.1 (self-distribution build, not part of the store release).
+## v0.4.0 — Host System Monitor (2026-11-08)
 
 - **Host system monitor** — the PVE node itself now appears at the top of the
   popup: CPU load, RAM usage, CPU package temperature (°C) and rootfs disk
-  usage, all with bars, live on auto-refresh. Display only — no power buttons,
-  no backup checkbox (host control may come later)
-- CPU temperature from `lm-sensors` (via `/nodes/{node}/status` →
+  usage, live on auto-refresh. Display only — no power buttons, no backup
+  checkbox (host control may come in a later version)
+- **2×2 bar layout** — the four host metrics are arranged in two rows of two
+  bars each, matching the guest entries' visual language
+- **CPU temperature from `lm-sensors`** (via `/nodes/{node}/status` →
   `sensorsOutput`): prefers `Package id 0`/`Tctl`/`Tdie` on coretemp/k10temp/
   zenpower chips, traffic-light colors (green < 60 °C, yellow < 75 °C, red
   above), N/A if no CPU sensor is available
-- Multi-node clusters: one host entry per node; offline nodes show N/A bars
-- New server-rack icon distinguishes the host from the guests
-- PVE version as tooltip on the host name, uptime in the meta line
+- **Disk usage with context** — one decimal place below 1% (a rootfs that is
+  0.5% full no longer rounds to a useless "0%"), absolute values
+  (used / total) as tooltip on the DISK bar
+- **Multi-node clusters** — one host entry per node; offline nodes show N/A
+  bars; a failed per-node status call degrades gracefully to partial data
+- New server-rack icon distinguishes the host from the guests; PVE version
+  as tooltip on the host name, uptime in the meta line
+- Updated all 9 theme screenshots (host entry included)
+
+> **Note:** v0.3.2 and v0.3.3 were unlisted release candidates of this feature
+> line with identical code paths — not part of the store release history.
 
 ## v0.3.0 — Public AMO Release (2026-09-19)
 
